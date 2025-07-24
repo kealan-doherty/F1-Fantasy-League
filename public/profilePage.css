@@ -1,0 +1,32 @@
+.background{
+    background-color: red;
+}
+.welcome{
+    
+    color:aliceblue;
+    text-align: center;
+}
+
+.userStats{
+    background-color: aliceblue;
+    display: inline-block;
+    padding: 20px;
+    border-radius: 12px;
+    
+    color:black;
+    margin: .5;
+}
+
+
+.container{
+    display: flex;
+    justify-content: center;
+}
+.alterTeam{
+    border-radius: 12px;
+    padding: 20px;
+    align-self: center;
+    display: flex;
+    justify-content: center;
+}
+

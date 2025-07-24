@@ -1,0 +1,80 @@
+ .welcomeMessage{
+    background-color: red;
+    color: white;
+    font-size: 40px;
+}
+
+.description{
+    font-size: 20px;
+    text-align: center;
+    color: white;
+}
+
+.newUserButton{
+    
+    margin: auto;
+    border-radius: 12px;
+    padding: 20px;
+    display: block;
+    text-align: center;
+    font-size:20;
+    background-color: white;
+    opacity: .9;
+
+}
+
+.returningUser{
+    text-align: center;
+    margin: auto;
+    border-radius: 12px;
+    padding:  20px;
+    display: block;
+    text-align: center;
+    font-size: 20;
+    background-color: white;
+    opacity: .9;
+    margin-top: 10px;
+}
+
+#welcomePageBackground{
+    background-color: red;
+    opacity: .9;
+}
+
+.how{
+    font-size: 24px;
+    color: white;
+    text-align: center;
+}
+
+
+div.containter{
+    text-align: center;
+}
+
+.qualiList{
+    display: inline-block;
+    text-align: left;
+    font-size: 18px;
+    color: white;
+}
+
+.newUserWelcome{
+    color: white;
+    text-align: center;
+    
+}
+
+.newUserBackground{
+    background-color: red;
+}
+
+
+.input{
+    display: block;
+    margin: auto;
+    border-radius: 12px;
+    width: 400px;
+    height: 50px;
+    
+}

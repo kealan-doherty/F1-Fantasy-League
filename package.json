@@ -1,0 +1,10 @@
+{
+  "name": "F1 fantasy",
+  "verison": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "pg": "^8.16.3"
+  }
+}
