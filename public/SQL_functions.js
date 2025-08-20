@@ -23,9 +23,6 @@ export function connectDb(){
 }
 
 
-
-function createUserTable(){
-    connectDb();
+connectDb();
     
 
-}

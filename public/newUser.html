@@ -5,14 +5,13 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Create Account</title>
         <link rel = "stylesheet" href="styles.css">
-        <script src = "newUserInfo.js"></script>
     </head>
 
-    <body class = "newUserBackground" method = 'post'>
+    <body class = "newUserBackground">
             <h1 class = "newUserWelcome">Create your new account here!</h1>
             <h2 class = "newUserWelcome"> Please Create your Account Below</h2>
 
-            <form id = "createAccount" method="post">
+            <form action = '/submit' id = "createAccount" method="post">
                 <input class = "input" type = "text" id = "username" name = "username" placeholder="Please Enter Your username here!">
 
                 <input class = "input" type = "password" id = "password" name = "password" placeholder="Please Creat Your Passowrd Here!">
