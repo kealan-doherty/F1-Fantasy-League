@@ -17,9 +17,13 @@ app.get('/', (req, res) => {
 
 app.post('/submit', (req, res) => {
     const data = req.body;
-    console.log(data);
     res.send('<h1> Account Created!!! </h1>');
     console.log("DATA SENT TO BACKEND YAYY!!!")
+});
+
+app.post('/sign-in', (req, res) => {
+    const data = req.body;
+    res.send('<h1> hey this works </h1>');
 });
 
 app.listen(port, () => {
