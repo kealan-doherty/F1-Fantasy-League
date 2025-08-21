@@ -4,14 +4,10 @@ Welcome to my verison of F1 Fantasy. which is a padory off the offical F1 Fantas
 
 Current Status: 
 
-              Server has been created locally and is able to run and load prototype verison of the web app 
-
-              Able to connect to the postgres database which has been created locally
+              New Users are able to create their accounts which are stored on the database. 
 
 
 Next steps: 
 
-            Create DB tables for user info and current team lineup 
-
-            apply hashing to user info before sending to the DB to ensure proper serucirty 
-            
+            finish Sign in page and handle requests for returning users logging in to the site. 
+            Then begin developing the log in page. 
