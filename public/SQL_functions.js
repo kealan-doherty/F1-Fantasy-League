@@ -36,7 +36,7 @@ export function disconnectDB(){
     
 
 export function createNewUser(username,password){
-    const insertQuery = 'INSERT INTO USER INFO (username, password) VALUES ($1, $2)'
+    const insertQuery = 'INSERT INTO public."USER INFO" (username, password) VALUES ($1, $2)'
 
     const values = [username, password];
 

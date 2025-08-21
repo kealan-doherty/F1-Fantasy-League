@@ -2,7 +2,6 @@ const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const express = require('express');
 const path = require('path');
-const { SHA256HASH, hash } = require('./public/hash');
 const { connectDb, createNewUser, disconnectDB } = require('./public/SQL_functions');
 const app = express();
 
@@ -10,6 +9,7 @@ const app = express();
 app.use(express.json());
 app.use(express.static('public'));
 const port = 3000;
+connectDb();
 
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -21,18 +21,12 @@ app.get('/', (req, res) => {
 app.post('/submit', async (req, res) => {
     const data = req.body;
     username = data.username;
-    try{
-        hashedPassowrd = await bcrypt.hash(data.password, 10); 
-        connectDb();
-        createNewUser(username,hashedPassowrd);
-        disconnectDB();
-    } catch(error){
-            console.error('Error Hashing Password', error);
+    if(data.password != data.confirmPassword){
+        res.send('<h1> Error Passwords Do not match Please try again');
     }
-    
-
-    
-    
+    hashedPassowrd = await bcrypt.hash(data.password, 10); 
+    createNewUser(username,hashedPassowrd);
+    res.send('<h1> you have made your new account click below to sign in </h1>');
 });
 
 app.post('/sign-in', (req, res) => {
@@ -43,3 +37,6 @@ app.post('/sign-in', (req, res) => {
 app.listen(port, () => {
     console.log("server is up and running");
 });
+
+
+
