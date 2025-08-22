@@ -42,3 +42,11 @@ export function createNewUser(username,password){
 
     const insertRes = client.query(insertQuery, values);
 }
+
+export function pullUserData(username){
+    const values = [username];
+    const selectQuery = 'SELECT password FROM public."USER INFO" WHERE username = $1';
+    const selectRes = client.query(selectQuery, values);
+    return selectRes;
+    }
+

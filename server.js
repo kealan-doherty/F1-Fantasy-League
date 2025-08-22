@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const express = require('express');
 const path = require('path');
-const { connectDb, createNewUser, disconnectDB } = require('./public/SQL_functions');
+const { connectDb, createNewUser, disconnectDB, pullUserData } = require('./public/SQL_functions');
 const app = express();
 
 
@@ -29,9 +29,22 @@ app.post('/submit', async (req, res) => {
     res.send('<h1> you have made your new account click below to sign in </h1>');
 });
 
-app.post('/sign-in', (req, res) => {
-    const data = req.body;
-    res.send('<h1> hey this works </h1>');
+app.post('/sign-in', async (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+    
+    const userData = await pullUserData(username);
+    const pulledPassword = userData.rows[0].password;
+    if( await bcrypt.compare(data = password, hashedPassowrd = pulledPassword) == true){
+       res.send(res.send("<h1> Hey this worked </h1>"));
+    } else {
+       res.send("<h1> Inncorrect Username or Password please Try Again </h1>");
+    }
+    console.log(userData.rows[0].password);
+    
+
+
+
 });
 
 app.listen(port, () => {
