@@ -35,17 +35,20 @@ app.post('/sign-in', async (req, res) => {
     
     const userData = await pullUserData(username);
     const pulledPassword = userData.rows[0].password;
-    if( await bcrypt.compare(data = password, hashedPassowrd = pulledPassword) == true){
-       res.send(res.send("<h1> Hey this worked </h1>"));
-    } else {
-       res.send("<h1> Inncorrect Username or Password please Try Again </h1>");
-    }
-    console.log(userData.rows[0].password);
     
-
-
-
+    if( await bcrypt.compare(data = password, hashedPassowrd = pulledPassword) == true){
+        return res.redirect('/profilePage');
+    } else {
+        return res.send("<h1> Inncorrect Username or Password please Try Again </h1>");
+    }
 });
+
+
+app.get('/profilePage', async (req,res) => {
+    console.log('hey there');
+    res.sendFile('profilePage.html', {root: path.join(__dirname, 'public')});
+});
+
 
 app.listen(port, () => {
     console.log("server is up and running");

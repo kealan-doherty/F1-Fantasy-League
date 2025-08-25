@@ -40,8 +40,7 @@
 }
 
 #welcomePageBackground{
-    background-color: red;
-    opacity: .9;
+    background-image: radial-gradient( circle 1588px at -27.3% 144%,  rgba(255,22,22,1) 0%, rgba(0,0,0,1) 43.4%, rgba(0,0,0,1) 65.8%, rgba(255,22,22,1) 100.2% );
 }
 
 .how{
