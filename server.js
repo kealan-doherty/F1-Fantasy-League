@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-const { connectDb, createNewUser, pullUserData } = require('./public/SQL_functions');
+const { connectDb, createNewUser, pullUserData, pullDrivers } = require('./public/SQL_functions');
 const app = express();
 
 
@@ -16,17 +16,15 @@ app.use(session({
     secret: secret,
     resave: false,
     saveUninitialized: false,
-    cookie: {secure: true, httpOnly: true, maxAge: 360000}
+    cookie: {secure: false, httpOnly: true, maxAge: 360000}
 }));
-const port = 3000;
-connectDb();
 
+connectDb();
 app.use(bodyParser.urlencoded({extended: true}));
 
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname,'public','index.html'));
 });
-
 
 app.post('/submit', async (req, res) => {
     const data = req.body;
@@ -47,21 +45,22 @@ app.post('/sign-in', async (req, res) => {
     const pulledPassword = userData.rows[0].password;
     
     if( await bcrypt.compare(data = password, hashedPassowrd = pulledPassword) == true){
-         req.session.user = {username: req.body.username};
+         req.session.user = {username: username};
+         req.session.save();
          res.redirect('/profilePage');
     } else {
          res.send("<h1> Inncorrect Username or Password please Try Again </h1>");
     }
 });
 
-
 app.get('/profilePage', async (req,res) => {
-    console.log(req.session.user);
+    const username = req.session.user.username;
+    const userData = pullDrivers(username);
+    console.log(userData);
     res.sendFile('profilePage.html', {root: path.join(__dirname, 'public')});
 });
 
-
-app.listen(port, () => {
+app.listen(3000, () => {
     console.log("server is up and running");
 });
 

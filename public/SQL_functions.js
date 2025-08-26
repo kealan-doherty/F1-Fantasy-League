@@ -60,7 +60,7 @@ export function updateConstrcutor(username, newConstructor){
 }
 
 export function pullDrivers(username){
-    const values = [useranme];
+    const values = [username];
     const selectQuery = 'SELECT 1stDriver, 2ndDriver FROM public."USER INFO" WHERE username = $1';
     const selectRes = client.query(selectQuery, values);
     return selectRes;
