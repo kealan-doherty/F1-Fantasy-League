@@ -4,10 +4,12 @@ Welcome to my verison of F1 Fantasy. which is a padory off the offical F1 Fantas
 
 Current Status: 
 
-              returning users are now able to sign-in to their accounts.
+              Users are able to sign-in/create accounts and returning users are routed to the profile Page
+              
 
 
 Next steps: 
 
             finish Sign in page and and create functionality for users to 
-            select their drivers and consrtructors. 
+            select their drivers and consrtructors. Also finish pullDrivers and pullConstructors 
+            function to pull user's team to display on the profile page.
