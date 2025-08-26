@@ -4,10 +4,10 @@ Welcome to my verison of F1 Fantasy. which is a padory off the offical F1 Fantas
 
 Current Status: 
 
-              New Users are able to create their accounts which are stored on the database. 
+              returning users are now able to sign-in to their accounts.
 
 
 Next steps: 
 
-            finish Sign in page and handle requests for returning users logging in to the site. 
-            Then begin developing the log in page. 
+            finish Sign in page and and create functionality for users to 
+            select their drivers and consrtructors. 
