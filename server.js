@@ -1,13 +1,23 @@
+require('dotenv').config();
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const express = require('express');
+const session = require('express-session');
 const path = require('path');
-const { connectDb, createNewUser, disconnectDB, pullUserData } = require('./public/SQL_functions');
+const { connectDb, createNewUser, pullUserData } = require('./public/SQL_functions');
 const app = express();
 
 
+const secret = process.env.SESSION_SERCRET;
+
 app.use(express.json());
 app.use(express.static('public'));
+app.use(session({
+    secret: secret,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {secure: true, httpOnly: true, maxAge: 360000}
+}));
 const port = 3000;
 connectDb();
 
@@ -37,15 +47,16 @@ app.post('/sign-in', async (req, res) => {
     const pulledPassword = userData.rows[0].password;
     
     if( await bcrypt.compare(data = password, hashedPassowrd = pulledPassword) == true){
-        return res.redirect('/profilePage');
+         req.session.user = {username: req.body.username};
+         res.redirect('/profilePage');
     } else {
-        return res.send("<h1> Inncorrect Username or Password please Try Again </h1>");
+         res.send("<h1> Inncorrect Username or Password please Try Again </h1>");
     }
 });
 
 
 app.get('/profilePage', async (req,res) => {
-    console.log('hey there');
+    console.log(req.session.user);
     res.sendFile('profilePage.html', {root: path.join(__dirname, 'public')});
 });
 
