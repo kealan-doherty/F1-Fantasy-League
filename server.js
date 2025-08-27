@@ -54,12 +54,18 @@ app.post('/sign-in', async (req, res) => {
 });
 
 app.get('/profilePage', async (req,res) => {
-    const username = req.session.user.username;
-    const userData = await pullTeam(username);
-    console.log(userData);
+    console.log('hello');
     res.sendFile('profilePage.html', {root: path.join(__dirname, 'public')});
 
 });
+
+app.get('/userData', async (req,res) => {
+    const username = req.session.user.username;
+    console.log(username);
+    const data = pullTeam(username);
+    res.json(data);
+})
+
 
 app.listen(3000, () => {
     console.log("server is up and running");
