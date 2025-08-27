@@ -59,9 +59,9 @@ export function updateConstrcutor(username, newConstructor){
     const UpdateQuery = 'UPDATE Constructor FROM public."USER INFO" WHERE username = $1'
 }
 
-export function pullDrivers(username){
+export function pullTeam(username){
     const values = [username];
-    const selectQuery = 'SELECT 1stDriver, 2ndDriver FROM public."USER INFO" WHERE username = $1';
+    const selectQuery = 'SELECT first_driver, second_driver, constructor FROM public."USER INFO" WHERE username = $1';
     const selectRes = client.query(selectQuery, values);
     return selectRes;
 }

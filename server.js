@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-const { connectDb, createNewUser, pullUserData, pullDrivers } = require('./public/SQL_functions');
+const { connectDb, createNewUser, pullUserData, pullDrivers, pullTeam } = require('./public/SQL_functions');
 const app = express();
 
 
@@ -55,9 +55,10 @@ app.post('/sign-in', async (req, res) => {
 
 app.get('/profilePage', async (req,res) => {
     const username = req.session.user.username;
-    const userData = pullDrivers(username);
+    const userData = await pullTeam(username);
     console.log(userData);
     res.sendFile('profilePage.html', {root: path.join(__dirname, 'public')});
+
 });
 
 app.listen(3000, () => {
