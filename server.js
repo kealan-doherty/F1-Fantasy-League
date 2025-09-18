@@ -30,7 +30,7 @@ app.post('/submit', async (req, res) => {
     const data = req.body;
     username = data.username;
     if(data.password != data.confirmPassword){
-        res.send('<h1> Error Passwords Do not match Please try again');
+        res.send('<h1> Error Passwords Do not match Please try again</h1>');
     }
     hashedPassowrd = await bcrypt.hash(data.password, 10); 
     createNewUser(username,hashedPassowrd);
@@ -61,9 +61,16 @@ app.get('/profilePage', async (req,res) => {
 
 app.get('/userData', async (req,res) => {
     const username = req.session.user.username;
-    console.log(username);
-    const data = pullTeam(username);
+    console.log(username)
+    const data = await pullTeam(username);
+    console.log(data);
     res.json(data);
+})
+
+app.post('/updateTeam', async (req,res) => {
+    const newDriverOne = req.body.newDriverOne;
+    const newDriverTwo = req.body.newDriverTwo;
+    const newConstructor = req.body.newConstructor;
 })
 
 

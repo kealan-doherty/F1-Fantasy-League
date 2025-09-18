@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang = 'en'>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="profilePage.css">
+        <title>Alter Your team!</title>
+    </head>
+
+    <body id = 'updateTeam'>
+        <script>
+        fetch('/userData')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.rows[0].username);
+                const username =`<h1>Welcome! ${data.rows[0].username} </h1>`;
+                document.querySelector('#updateTeam').insertAdjacentHTML('beforeend', username);
+
+            });
+        </script>
+        
+        <form>
+            <select name = "select_first_driver"> 
+                <option> First Driver </option>
+                <option> lewis Hamlition</option>
+                <option> charles Lerelc </option>
+                <option> Geogre Russel</option>
+                <option> Kimi Antineolli</option>
+                <option> Max Verstappen</option>
+                <option> Yuki Tsuonoda</option>
+                <option> Lando Norris</option>
+                <option> Oscar Piastri</option>
+                <option> Fernado Alonso</option>
+                <option> Lance Stroll</option>
+                <option> Alex Albon</option>
+                <option> Carlos Saniz</option>
+                <option> Laim Lawson</option>
+                <option> Issac Hadjar</option>
+                <option> Nico Hulkenberg</option>
+                <option> Gaberiello Borteletto</option>
+                <option> Estban Ocon</option>
+                <option> Oliver Bearman</option>
+                <option> Pierre Gasly</option>
+                <option> Franco Colipinato</option>
+            </select>
+
+            <select name = "select_second_driver"> 
+                <option> Second Driver </option>
+                <option> lewis Hamlition</option>
+                <option> charles Lerelc </option>
+                <option> Geogre Russel</option>
+                <option> Kimi Antineolli</option>
+                <option> Max Verstappen</option>
+                <option> Yuki Tsuonoda</option>
+                <option> Lando Norris</option>
+                <option> Oscar Piastri</option>
+                <option> Fernado Alonso</option>
+                <option> Lance Stroll</option>
+                <option> Alex Albon</option>
+                <option> Carlos Saniz</option>
+                <option> Laim Lawson</option>
+                <option> Issac Hadjar</option>
+                <option> Nico Hulkenberg</option>
+                <option> Gaberiello Borteletto</option>
+                <option> Estban Ocon</option>
+                <option> Oliver Bearman</option>
+                <option> Pierre Gasly</option>
+                <option> Franco Colipinato</option>
+            </select>
+
+            <select name ='select constructor'>
+                <option> Constructor</option>
+                <option> Mclaren</option>
+                <option> Red Bull</option>
+                <option> Mercedes</option>
+                <option> Ferrari</option>
+                <option> Aston Martin</option>
+                <option> Racing Bulls</option>
+                <option> Williams</option>
+                <option> Haas</option>
+                <option> F1 Stake Sauber</option>
+                <option> Alpine</option>
+            </select>
+            <button> Update Team</button>
+        </form>
+    </body>
+</html>

@@ -1,30 +1,55 @@
 <!DOCTYPE html>
-<html lang = "en">
-    <head>
-        <meta charset = "utf-8">
-        <title> F1 Fanasty</title>
-        <link rel="stylesheet" href="styles.css">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        
-    </head>
-<body id = 'welcomePageBackground' method = 'get'>
-    <h1> Formula 1 Fanasty  </h1>
-    <p>With this site you are able to bulid your very own Formula 1 team. by selecting 2 drivers from the current grid. And 1 constrcutor bulid the F1 team of your dreams. Compete against other teams earn points from Qualifying, Overtakes, Finishing postion. Inorder to win the Championship at the end of the season.</p>
-    <h2> How it Works:</h2>
-    <p> Each race weekend on the calender you will have until friday before the end of Free Pratice 1 to select your line up for the week at. Then on Saturday you recivie points \
-        for Qualifying depedning on how well your team performs.
-    </p>
-    <div>
->
-            <li> Pole Postion: 10 pts</li>
-            <li> P2: 9 pts </li>
-            <li> P3: 6 pts</li>
-            <li> P4: 3 pts</li>
-            <li> P5: 1 pt</li>
-        </ul>
-    </div>
-    <p> Then on sunday you will recivie points based on how well your constrcutor performed (Driver with the highest finshing position). how many overtakes your drivers had (2pts per overtake). And their finsihing position where points will be handed out as they are in the race.</p>
-    <button> <a href = "newUser.html"> New? create a account here! </a></button>
-    <button > <a href = "returningUser.html"> Returning user sign in here! </a></button>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>F1 Fantasy</title>
+    <link rel="stylesheet" href="styles.css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body id="welcomePageBackground">
+    <header>
+        <h1 class="welcomeMessage">Formula 1 Fantasy</h1>
+    </header>
+
+    <section id="description">
+        <p class="description">Build your dream Formula 1 team! Select two drivers from the current grid and one constructor to compete against other players. Earn points based on Qualifying,
+            overtakes, and finishing positions to win the championship.
+        </p>
+    </section>
+
+    <section id="how-it-works">
+        <h2 class="how">How It Works:</h2>
+        <p>Each race weekend, you'll have until the end of Free Practice 1 on Friday to select your lineup. Points are awarded on Saturday for Qualifying performance:</p>
+
+        <div class="container">
+            <ul class="qualiList">
+                <li>Pole Position: 10 pts</li>
+                <li>P2: 9 pts</li>
+                <li>P3: 6 pts</li>
+                <li>P4: 3 pts</li>
+                <li>P5: 1 pt</li>
+            </ul>
+        </div>
+
+        <p class="description">On Sunday, you'll receive points based on your constructor's performance (highest finishing driver), the number of overtakes your drivers make (2 points per overtake), and your drivers' finishing positions (points awarded as in the actual race).
+        </p>
+    </section>
+
+    <section id="user-actions">
+        <button class="newUserButton">
+            <a href="newUser.html">New? Create an Account Here!</a>
+        </button>
+        <button class="returningUser">
+            <a href="returningUser.html">Returning User: Sign In Here!</a>
+        </button>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 F1 Fantasy</p>
+    </footer>
 </body>
+
 </html>

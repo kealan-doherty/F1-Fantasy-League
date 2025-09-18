@@ -61,7 +61,8 @@ export function updateConstrcutor(username, newConstructor){
 
 export function pullTeam(username){
     const values = [username];
-    const selectQuery = 'SELECT first_driver, second_driver, constructor FROM public."USER INFO" WHERE username = $1';
+    const selectQuery = 'SELECT * FROM "USER INFO" WHERE username = $1';
     const selectRes = client.query(selectQuery, values);
+    console.log(selectRes);
     return selectRes;
 }

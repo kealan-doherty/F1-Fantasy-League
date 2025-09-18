@@ -1,27 +1,43 @@
 <!DOCTYPE html>
-<html lang = "en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <link rel = "stylesheet" href = "profilePage.css">
-        <script> src = "fetch.js" </script>
-        <title>Profile</title>
-    </head>
+<html lang="en">
 
-    <body class = "background">
-        <h1 class = "welcome">Welcome!  </h1>
-        <h2> Current Team: </h2>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="profilePage.css">
+    <title>Profile</title>
+</head>
 
-        <div class = " container">
-            <button class = "alterTeam"> Alter line-up</button>
-        </div>
+<body>
 
-        <div>
-            <div class = "userStats"> Current Championship Standings: </div>
-            <div class ="userStats"> Total Season Points: </div>
-            <div class = "userStats"> Points From The Last Grand Prix:</div>
-        </div>
+    <script>
+        fetch('/userData')
+            .then(response => response.json())
+            .then(data => {
+                const first_driver = `<div class = 'userStats'> First Driver: ${data.rows[0].first_driver} </div>`;
+                const second_driver = `<div class = 'userStats'> Second Driver: ${data.rows[0].second_driver} </div>`;
+                const constrcutor = `<div class = 'userStats'> Constructor: ${data.rows[0].constructor} </div>`;
 
+                document.querySelector('#userInfo').insertAdjacentHTML('beforeend', first_driver);
+                document.querySelector('#userInfo').insertAdjacentHTML('beforeend', second_driver);
+                document.querySelector('#userInfo').insertAdjacentHTML('beforeend', constrcutor);
+            });
+    </script>
 
-    </body>
+    <h1 class="welcome">Welcome!</h1>
+    <h2>Current Team:</h2>
+
+    <div class="container">
+        <button class="alterTeam"><a href = 'Alterteam.html'>Alter line-up
+        </button>
+    </div>
+
+    <div id="userInfo">
+        <div class="userStats">Current Championship Standings:</div>
+        <div class="userStats">Total Season Points:</div>
+        <div class="userStats">Points From The Last Grand Prix:</div>
+    </div>
+
+</body>
+
 </html>
