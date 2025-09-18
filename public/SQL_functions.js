@@ -50,13 +50,30 @@ export function pullUserData(username){
     return selectRes;
     }
 
-export function updateDrivers(username, newDrviers){
-
+export  async function updateDrivers(username, driver_one, driver_two){
+    const values = [driver_one, driver_two, username]; 
+    const updateQuery = `UPDATE public."USER INFO" SET first_driver = $1, second_driver = $2 WHERE username = $3`;
+    try {
+        const updateRes = await client.query(updateQuery, values);
+        return updateRes.rowCount; 
+    } catch (error) {
+        console.error("Error updating drivers:", error);
+        return -1; 
+    }
 }
 
+
 export function updateConstrcutor(username, newConstructor){
-    const values = [useranme, newConstructor];
-    const UpdateQuery = 'UPDATE Constructor FROM public."USER INFO" WHERE username = $1'
+    const values = [newConstructor, username];
+    const updateQuery = 'UPDATE public."USER INFO" SET constructor = $1 WHERE username = $2';
+    try{
+        const updateRes = client.query(updateQuery,values);
+        return updateRes.rowCount;
+    } catch (error){
+        console.error("error updating the constructor", error);
+        return -1;
+    }
+    
 }
 
 export function pullTeam(username){

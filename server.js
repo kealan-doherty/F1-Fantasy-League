@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-const { connectDb, createNewUser, pullUserData, pullDrivers, pullTeam } = require('./public/SQL_functions');
+const { connectDb, createNewUser, pullUserData, pullDrivers, pullTeam, updateConstrcutor, updateDrivers } = require('./public/SQL_functions');
 const app = express();
 
 
@@ -54,24 +54,31 @@ app.post('/sign-in', async (req, res) => {
 });
 
 app.get('/profilePage', async (req,res) => {
-    console.log('hello');
     res.sendFile('profilePage.html', {root: path.join(__dirname, 'public')});
 
 });
 
 app.get('/userData', async (req,res) => {
     const username = req.session.user.username;
-    console.log(username)
     const data = await pullTeam(username);
-    console.log(data);
     res.json(data);
-})
+});
 
 app.post('/updateTeam', async (req,res) => {
-    const newDriverOne = req.body.newDriverOne;
-    const newDriverTwo = req.body.newDriverTwo;
-    const newConstructor = req.body.newConstructor;
-})
+    const username = req.session.user.username;
+    const newDriverOne = req.body.first_driver;
+    const newDriverTwo = req.body.second_driver;
+    const newConstructor = req.body.constructor;
+    try{
+        await updateConstrcutor(username, newConstructor);
+        await updateDrivers(username, newDriverOne, newDriverTwo);
+        res.send('working');
+    } catch (err){
+        console.error("error occured in updating team", err.message);
+    }
+    res.redirect('/ProfilePage');
+
+});
 
 
 app.listen(3000, () => {
