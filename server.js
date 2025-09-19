@@ -34,7 +34,10 @@ app.post('/submit', async (req, res) => {
     }
     hashedPassowrd = await bcrypt.hash(data.password, 10); 
     createNewUser(username,hashedPassowrd);
-    res.send('<h1> you have made your new account click below to sign in </h1>');
+    req.session.user = {username: username};
+    req.session.save();
+    res.sendFile('alterTeam.html', {root: path.join(__dirname, 'public')});
+    
 });
 
 app.post('/sign-in', async (req, res) => {
@@ -59,9 +62,13 @@ app.get('/profilePage', async (req,res) => {
 });
 
 app.get('/userData', async (req,res) => {
-    const username = req.session.user.username;
-    const data = await pullTeam(username);
-    res.json(data);
+    try{
+        const username = req.session.user.username;
+        const data = await pullTeam(username);
+        res.json(data);
+    }catch (error){
+        console.error('error sending teams data', error);
+    }
 });
 
 app.post('/updateTeam', async (req,res) => {
@@ -72,12 +79,22 @@ app.post('/updateTeam', async (req,res) => {
     try{
         await updateConstrcutor(username, newConstructor);
         await updateDrivers(username, newDriverOne, newDriverTwo);
-        res.send('working');
+        res.sendFile('profilePage.html', {root: path.join(__dirname, 'public')});
     } catch (err){
         console.error("error occured in updating team", err.message);
     }
     res.redirect('/ProfilePage');
 
+});
+
+app.post('/username', async (req,res) => {
+    const data = req.session.user.username;
+    console.log(data);
+    try{
+        res.json(data);
+    } catch (error){
+        console.error('error sending username to frontend', error); 
+    }
 });
 
 

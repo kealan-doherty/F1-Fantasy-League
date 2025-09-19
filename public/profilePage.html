@@ -11,13 +11,20 @@
 <body>
 
     <script>
+
+        fetch('/useranme')
+            .then(response => repsonse.json())
+            .then(data => {
+                console.log(data)
+            });
         fetch('/userData')
             .then(response => response.json())
             .then(data => {
+
                 const first_driver = `<div class = 'userStats'> First Driver: ${data.rows[0].first_driver} </div>`;
                 const second_driver = `<div class = 'userStats'> Second Driver: ${data.rows[0].second_driver} </div>`;
                 const constrcutor = `<div class = 'userStats'> Constructor: ${data.rows[0].constructor} </div>`;
-
+                
                 document.querySelector('#userInfo').insertAdjacentHTML('beforeend', first_driver);
                 document.querySelector('#userInfo').insertAdjacentHTML('beforeend', second_driver);
                 document.querySelector('#userInfo').insertAdjacentHTML('beforeend', constrcutor);

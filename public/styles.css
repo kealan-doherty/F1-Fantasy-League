@@ -39,6 +39,7 @@ header {
 #how-it-works {
     padding: 1em;
     margin: 1em;
+    text-align: center;
     background-color: rgba(255, 255, 255, 0.05); /* slightly transparent white */
     border-radius: 5px;
     border: 1px solid #8B0000; /* Dark Red */
