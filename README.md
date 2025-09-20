@@ -4,7 +4,8 @@ Welcome to my verison of F1 Fantasy. which is a padory off the offical F1 Fantas
                     JavaSctipt
                     Express.js,
                     Postgres,
-                    CSS/HTML
+                    CSS/HTML,
+                    OpenF1 API (For Race and Quali Data) https://github.com/br-g/openf1
 
 In this web application you will be able to create your team of 2 current F1 drivers and 1 cosntuctor and play for points to see how can create the ulitmate F1 dream team. 
 
