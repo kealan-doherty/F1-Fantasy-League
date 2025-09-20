@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-const { connectDb, createNewUser, pullUserData, pullDrivers, pullTeam, updateConstrcutor, updateDrivers } = require('./public/SQL_functions');
+const { connectDb, createNewUser, pullUserData, pullDrivers, pullTeam, updateConstrcutor, updateDrivers, updatePts } = require('./public/SQL_functions');
 const app = express();
 
 
@@ -100,6 +100,7 @@ app.post('/username', async (req,res) => {
 
 app.listen(3000, () => {
     console.log("server is up and running");
+    console.log();
 });
 
 

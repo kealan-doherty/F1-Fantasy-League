@@ -1,5 +1,7 @@
 import 'dotenv/config';
 import { Client, Pool } from 'pg';
+import { pullDriverResults } from './pullRaceResults';
+import { objectDirection } from 'three/tsl';
 
 const key = process.env.DB_KEY;
 const host = process.env.DB_HOST;
@@ -91,18 +93,18 @@ export function pullTeam(username){
     return selectRes;
 }
 
-export function updatePts(){
-    // this function will update driver by driver and evenutally team by team to 
-    // make this function easier to test and to simplify the SQL queries. 
-
-    const updateQuery = 'UPDATE public."USER INFO" set points = points + 1 WHERE first_driver = "Max_Verstappen"';
+export function updatePts(driverResults){
+    const updateQueryOne = 'UPDATE public."USER INFO" set points = points + $2 WHERE first_driver = $1';
+    const updateQuertTwo = 'UPDATE public."USER INFO" set points = points + $2 WHERE second_driver = $1';
     try{
-        const updatePts = client.query(updateQuery);
-        return updatePts.rowCount;
+        Object.keys(driverResults).forEach(key => {
+            values = [key,driverResults[key]];
+            const updatePts = client.query(updateQuery,values);
+            const updatePtstwo = client.query(updateQuertTwo,values);
+        })
     } catch (error){
         console.error('error updating frist drivers points', error);
         return -1;
     }
 }
-
 

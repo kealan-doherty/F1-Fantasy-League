@@ -1,63 +1,30 @@
-
-    const driverNumbers = {1:"Max Verstappen",
-                       22:"Yuki Tusonda",
-                       81:"Oscar Piastri",
-                       4:"Lando Norris",
-                       16:"Charles Leclerc",
-                       44:"Lewis Hamilton",
-                       63:"George Russell",
-                       12:"Kimi Antonelli",
-                       23:"Alex Albon",
-                       55:"Carlos Sainz",
-                       18:"Lance Stroll",
-                       14:"Fernando Alonso",
-                       30:"Liam Lawson",
-                       8:"Isack Hadjar",
-                       27:"Nico Hulkenberg",
-                       5:"Gabriel Bortoleto",
-                       31:"Esteban Ocon",
-                       87:"Oliver Bearman",
-                       10:"Pierre Gasly",
-                       43:"Franco Colapinto",
-  }
-
-  const pointsForPosition = {1:25,
-                             2:18,
-                             3:15,
-                             4:12,
-                             5:10,
-                             6:8,
-                             7:6,
-                             8:4,
-                             9:2,
-                             10:1
-  }
+import { updatePts } from "./SQL_functions.js";
 
 export function pullDriverResults(){
     fetch("https://api.openf1.org/v1/session_result?session_key=latest&position<=10")
     .then((response) => response.json())
     .then((jsonContent) => {
-        console.log(jsonContent[5]);
         const driverResults = {}
+        //update the fetched data to convert driver number to name as it's stored in the DB
         for(let i = 0; i <= 9; i++ ){
             switch(jsonContent[i].driver_number){
                 case 1:
-                    driverResults["Max Verstappen"] = jsonContent[i].position;
+                    driverResults["Max_Verstappen"] = jsonContent[i].position;
                     continue;
                 case 22:
-                    driverResults["Yuki Tsunoda"] = jsonContent[i].position;
+                    driverResults["Yuki_Tsunoda"] = jsonContent[i].position;
                     continue;
                 case 81:
-                    driverResults["Oscar Piastri"] = jsonContent[i].position;
+                    driverResults["Oscar_Piastri"] = jsonContent[i].position;
                     continue;
                 case 4:
-                    driverResults["Lando Norris"] = jsonContent[i].position;
+                    driverResults["Lando_Norris"] = jsonContent[i].position;
                     continue;
                 case 16:
-                    driverResults["Charles Lerlerc"] = jsonContent[i].position;
+                    driverResults["Charles_Lerlerc"] = jsonContent[i].position;
                     continue;
                 case 44:
-                    driverResults["Lewis Hamilton"] = jsonContent[i].position;
+                    driverResults["Lewis_Hamilton"] = jsonContent[i].position;
                     continue;
                 case 63:
                     driverResults["Geogre Russell"] = jsonContent[i].position;
@@ -81,35 +48,75 @@ export function pullDriverResults(){
                     driverResults["Esteban Ocon"] = jsonContent[i].position;
                     continue;
                 case 87:
-                    driverResults["Oliver Bearman"] = jsonContent[i].position;
+                    driverResults["Oliver_Bearman"] = jsonContent[i].position;
                     continue;
                 case 27:
-                    driverResults["Nico Hulkenberg"] = jsonContent[i].position;
+                    driverResults["Nico_Hulkenberg"] = jsonContent[i].position;
                     continue;
                 case 5:
-                    driverResults["Gabriel Bortoleto"] = jsonContent[i].position;
+                    driverResults["Gabriel_Bortoleto"] = jsonContent[i].position;
                     continue;
                 case 30:
-                    driverResults["Liam Lawson"] = jsonContent[i].position;
+                    driverResults["Liam_Lawson"] = jsonContent[i].position;
                     continue;
                 case 6:
-                    driverResults["Isack Hadjar"] = jsonContent[i].position;
+                    driverResults["Isack_Hadjar"] = jsonContent[i].position;
                     continue;
                 case 10:
-                    driverResults["Pierre Gasly"] = jsonContent[i].position;
+                    driverResults["Pierre_Gasly"] = jsonContent[i].position;
                     continue;
                 case 43:
-                    driverResults["Franco Colapinto"] = jsonContent[i].position;
+                    driverResults["Franco_Colapinto"] = jsonContent[i].position;
                     continue;
                 default:
                     console.log("Driver is not currently listed");
             }       
         }
-
+        updatePts(driverResults);
 });
 }
+
+export function convertPosToPts(driverResults){
+    // transform position into points scored for ease of adding them to the DB
+        Object.keys(driverResults).forEach(key => {
+            switch(driverResults[key]){
+                case 1:
+                    driverResults[key] = 25;
+                    break;
+                case 2:
+                    driverResults[key] = 18;
+                    break;
+                case 3:
+                    driverResults[key] = 15;
+                    break;
+                case 4: 
+                    driverResults[key] = 12;
+                    break;
+                case 5:
+                    driverResults[key] = 10;
+                    break;
+                case 6:
+                    driverResults[key] = 8;
+                    break;
+                case 7:
+                    driverResults[key] = 6;
+                    break;
+                case 8: 
+                    driverResults[key] = 4;
+                    break;
+                case 9:
+                    driverResults[key] = 2;
+                    break;
+                case 10:
+                    driverResults[key] = 1;
+                    break;
+                default:
+                    console.log('invaild position issue with fetching result data');
+
+            }
+        });
+        return driverResults;
+}
     
-    
 
-
-
+pullDriverResults();
