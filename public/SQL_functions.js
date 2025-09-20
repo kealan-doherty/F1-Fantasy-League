@@ -36,11 +36,18 @@ export function disconnectDB(){
     
 
 export function createNewUser(username,password){
-    const insertQuery = 'INSERT INTO public."USER INFO" (username, password) VALUES ($1, $2)'
-
+    const insertQuery = 'INSERT INTO public."USER INFO" (username, password) VALUES ($1, $2)';
+    const intitPts = 'UPDATE public."USER INFO" set points = 0 WHERE username = $1';
     const values = [username, password];
-
-    const insertRes = client.query(insertQuery, values);
+    const user = [username];
+    try{
+        const insertRes = client.query(insertQuery, values);
+        const ptsRes = client.query(intitPts, user);
+        return insertRes.rowCount;
+    } catch (error){
+        console.error("Error creating profile", error);
+        return -1;
+    }
 }
 
 export function pullUserData(username){
@@ -83,3 +90,19 @@ export function pullTeam(username){
     console.log(selectRes);
     return selectRes;
 }
+
+export function updatePts(){
+    // this function will update driver by driver and evenutally team by team to 
+    // make this function easier to test and to simplify the SQL queries. 
+
+    const updateQuery = 'UPDATE public."USER INFO" set points = points + 1 WHERE first_driver = "Max_Verstappen"';
+    try{
+        const updatePts = client.query(updateQuery);
+        return updatePts.rowCount;
+    } catch (error){
+        console.error('error updating frist drivers points', error);
+        return -1;
+    }
+}
+
+
