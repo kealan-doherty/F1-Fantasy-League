@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import { Client, Pool } from 'pg';
-import { pullDriverResults } from './pullRaceResults';
 import { objectDirection } from 'three/tsl';
 
 const key = process.env.DB_KEY;

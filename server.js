@@ -1,10 +1,12 @@
 require('dotenv').config();
 const bcrypt = require('bcrypt');
+const cron = require('node-cron');
 const bodyParser = require('body-parser');
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
 const { connectDb, createNewUser, pullUserData, pullDrivers, pullTeam, updateConstrcutor, updateDrivers, updatePts } = require('./public/SQL_functions');
+const { pullDriverResults, convertPosToPts } = require('./public/pullRaceResults');
 const app = express();
 
 
@@ -97,10 +99,30 @@ app.post('/username', async (req,res) => {
     }
 });
 
+async function updateScore(){
+    const today = new Date();
+    const day = today.getDay();
+    if(day === 1){
+        try{
+            let driverResults = {};
+            pullDriverResults(driverResults);
+            convertPosToPts(driverResults);
+            updatePts(driverResults);
+            return 1
+        } catch (err){
+            console.log('error updating points after the race', err);
+            return -1 
+        }
+    }
+    
+}
+
+cron.schedule('0 17 * * 1', () => {
+    updateScore();
+})
 
 app.listen(3000, () => {
     console.log("server is up and running");
-    console.log();
 });
 
 

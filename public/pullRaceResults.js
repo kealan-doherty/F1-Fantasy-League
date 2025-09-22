@@ -1,10 +1,9 @@
-import { updatePts } from "./SQL_functions.js";
 
-export function pullDriverResults(){
+
+export function pullDriverResults(driverResults){
     fetch("https://api.openf1.org/v1/session_result?session_key=latest&position<=10")
     .then((response) => response.json())
     .then((jsonContent) => {
-        const driverResults = {}
         //update the fetched data to convert driver number to name as it's stored in the DB
         for(let i = 0; i <= 9; i++ ){
             switch(jsonContent[i].driver_number){
@@ -72,7 +71,7 @@ export function pullDriverResults(){
                     console.log("Driver is not currently listed");
             }       
         }
-        updatePts(driverResults);
+        
 });
 }
 
@@ -119,4 +118,4 @@ export function convertPosToPts(driverResults){
 }
     
 
-pullDriverResults();
+
