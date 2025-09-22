@@ -104,10 +104,13 @@ async function updateScore(){
     const day = today.getDay();
     if(day === 1){
         try{
-            let driverResults = {};
-            pullDriverResults(driverResults);
-            convertPosToPts(driverResults);
-            updatePts(driverResults);
+            const drivers = await pullDriverResults();
+            console.log(drivers);
+            pullDriverResults(drivers);
+            console.log(drivers);
+            convertPosToPts(drivers);
+            
+            updatePts(drivers);
             return 1
         } catch (err){
             console.log('error updating points after the race', err);
@@ -117,7 +120,8 @@ async function updateScore(){
     
 }
 
-cron.schedule('0 17 * * 1', () => {
+cron.schedule('0 18 * * 1', () => {
+    console.log('exec');
     updateScore();
 })
 

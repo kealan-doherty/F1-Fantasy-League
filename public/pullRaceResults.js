@@ -1,9 +1,9 @@
 
-
-export function pullDriverResults(driverResults){
+export async function pullDriverResults(){
     fetch("https://api.openf1.org/v1/session_result?session_key=latest&position<=10")
     .then((response) => response.json())
     .then((jsonContent) => {
+        const driverResults = {}
         //update the fetched data to convert driver number to name as it's stored in the DB
         for(let i = 0; i <= 9; i++ ){
             switch(jsonContent[i].driver_number){
@@ -71,6 +71,7 @@ export function pullDriverResults(driverResults){
                     console.log("Driver is not currently listed");
             }       
         }
+        return driverResults;
         
 });
 }
@@ -113,8 +114,9 @@ export function convertPosToPts(driverResults){
                     console.log('invaild position issue with fetching result data');
 
             }
+            return driverResults;
         });
-        return driverResults;
+        
 }
     
 

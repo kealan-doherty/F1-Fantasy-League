@@ -1,6 +1,4 @@
 
-
-
 body {
     font-family: sans-serif;
     margin: 0;
@@ -22,17 +20,18 @@ body {
 }
 
 header {
-    background-color: #222; /* Dark header background */
-    color: white;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #FF4500;
     text-align: center;
     padding: 1em 0;
-    border-bottom: 2px solid #8B0000; /* Dark Red */
+    border-bottom: 2px solid #FF4500; 
+    box-shadow: 0 0 5px #FF4500, 0 0 10px #FF4500;
 }
 
 .welcomeMessage {
     font-size: 2em;
     margin-bottom: 0.5em;
-    text-shadow: 2px 2px 4px #000000; /* Add a text shadow for better readability */
+    text-shadow: 2px 2px 4px #000000; 
 }
 
 #description,
@@ -40,10 +39,10 @@ header {
     padding: 1em;
     margin: 1em;
     text-align: center;
-    background-color: rgba(255, 255, 255, 0.05); /* slightly transparent white */
+    background-color: rgba(255, 255, 255, 0.05); 
     border-radius: 5px;
-    border: 1px solid #8B0000; /* Dark Red */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* subtle shadow */
+    border: 1px solid #FF4500; 
+    box-shadow: 0 0 5px #FF4500, 0 0 10px #FF4500;
 }
 
 .description {
@@ -53,7 +52,7 @@ header {
 .how {
     font-size: 1.5em;
     margin-bottom: 0.5em;
-    color: #FF4500; /* Orangered */
+    color: #FF4500; 
     text-shadow: 1px 1px 2px #000000;
 }
 
@@ -73,43 +72,62 @@ header {
     border-bottom: 1px solid #666;
 }
 
-/* Style the buttons */
+
+.button-container { 
+  display: flex;
+  flex-direction: column; 
+  justify-content: center;
+  align-items: center; 
+
+}
+
+
 .newUserButton,
 .returningUser {
-    display: block;
-    width: 200px;
-    margin: 1em auto;
-    padding: 0.75em 1.5em;
-    background-color: #8B0000; /* Dark Red */
-    color: white;
-    text-decoration: none;
+    padding: 12px 24px;
+    background: transparent;
+    color: #FF4500;
+    border: 2px solid #FF4500;
     border-radius: 5px;
-    text-align: center;
-    border: none;
+    font-weight: bold;
+    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease; /* smooth transition */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 5px #FF4500, 0 0 10px #FF4500;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+    width: fit-content;
 }
 
 .newUserButton:hover,
 .returningUser:hover {
-    background-color: #FF4500; /* Orangered on hover */
+  color: #000;
+  box-shadow: 0 0 10px #FF4500, 0 0 20px #FF4500, 0 0 40px #FF4500;
+  background-color: #FF4500; 
 }
 
-/* Style the links inside the buttons */
+
 .newUserButton a,
 .returningUser a {
     color: inherit;
     text-decoration: none;
 }
 
+
 footer {
     text-align: center;
     padding: 1em;
-    background-color: #222; /* Dark background */
+    background-color: #222; 
     color: white;
-    border-top: 2px solid #8B0000; /* Dark Red */
+    border-top: 2px solid #FF4500; 
 }
 
-
+.signIn{
+    padding: 1em;
+    margin: 1em;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.05); 
+    border-radius: 5px;
+    border: 1px solid #FF4500; 
+    box-shadow: 0 0 5px #FF4500, 0 0 10px #FF4500;
+}
 
