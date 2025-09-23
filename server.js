@@ -7,6 +7,7 @@ const session = require('express-session');
 const path = require('path');
 const { connectDb, createNewUser, pullUserData, pullDrivers, pullTeam, updateConstrcutor, updateDrivers, updatePts } = require('./public/SQL_functions');
 const { pullDriverResults, convertPosToPts } = require('./public/pullRaceResults');
+const { js } = require('three/tsl');
 const app = express();
 
 
@@ -99,19 +100,27 @@ app.post('/username', async (req,res) => {
     }
 });
 
-async function updateScore(){
+function updateScore(){
     const today = new Date();
     const day = today.getDay();
-    if(day === 1){
-        try{
-            const drivers = await pullDriverResults();
-            console.log(drivers);
-            pullDriverResults(drivers);
-            console.log(drivers);
-            convertPosToPts(drivers);
+    fetch("https://api.openf1.org/v1/session_result?session_key=latest&position<=10")
+        .then((response) => response.json())
+        .then((jsonContent) => {
+            driverResults = pullDriverResults(jsonContent);
+            updatePts(driverResults);
             
-            updatePts(drivers);
-            return 1
+        });
+    if(day === 2){
+        try{
+           
+           // const drivers = await pullDriverResults();
+           // console.log(drivers);
+           // pullDriverResults(drivers);
+            //console.log(drivers);
+            //convertPosToPts(drivers);
+            
+           // updatePts(drivers);
+            //return 1
         } catch (err){
             console.log('error updating points after the race', err);
             return -1 
@@ -126,6 +135,7 @@ cron.schedule('0 18 * * 1', () => {
 })
 
 app.listen(3000, () => {
+    updateScore();
     console.log("server is up and running");
 });
 

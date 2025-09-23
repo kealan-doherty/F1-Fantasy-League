@@ -93,17 +93,18 @@ export function pullTeam(username){
 }
 
 export function updatePts(driverResults){
+    // ensure this function is working correctly!!!
     const updateQueryOne = 'UPDATE public."USER INFO" set points = points + $2 WHERE first_driver = $1';
     const updateQuertTwo = 'UPDATE public."USER INFO" set points = points + $2 WHERE second_driver = $1';
-    try{
-        Object.keys(driverResults).forEach(key => {
-            values = [key,driverResults[key]];
-            const updatePts = client.query(updateQuery,values);
-            const updatePtstwo = client.query(updateQuertTwo,values);
-        })
-    } catch (error){
-        console.error('error updating frist drivers points', error);
-        return -1;
+        try{
+            for (const key in driverResults){
+                const values = [key,driverResults[key]];
+                const updatePtsOne = client.query(updateQueryOne,values);
+                const updatePtstwo = client.query(updateQuertTwo,values);
+            }
+    } catch (error) {
+        console.error('error updating user race results');
     }
+   
 }
 

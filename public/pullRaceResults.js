@@ -1,10 +1,7 @@
 
-export async function pullDriverResults(){
-    fetch("https://api.openf1.org/v1/session_result?session_key=latest&position<=10")
-    .then((response) => response.json())
-    .then((jsonContent) => {
-        const driverResults = {}
+export function pullDriverResults(jsonContent){
         //update the fetched data to convert driver number to name as it's stored in the DB
+        const driverResults = {}
         for(let i = 0; i <= 9; i++ ){
             switch(jsonContent[i].driver_number){
                 case 1:
@@ -26,25 +23,25 @@ export async function pullDriverResults(){
                     driverResults["Lewis_Hamilton"] = jsonContent[i].position;
                     continue;
                 case 63:
-                    driverResults["Geogre Russell"] = jsonContent[i].position;
+                    driverResults["Geogre_Russell"] = jsonContent[i].position;
                     continue;
                 case 12:
-                    driverResults["Kimi Antinelli"] = jsonContent[i].position;
+                    driverResults["Kimi_Antinelli"] = jsonContent[i].position;
                     continue;
                 case 18:
-                    driverResults["Lance Stroll"] = jsonContent[i].position;
+                    driverResults["Lance_Stroll"] = jsonContent[i].position;
                     continue;
                 case 14:
-                    driverResults["Fernando Alonso"] = jsonContent[i].position;
+                    driverResults["Fernando_Alonso"] = jsonContent[i].position;
                     continue
                 case 55:
-                    driverResults["Carlos Sainz"] = jsonContent[i].position;
+                    driverResults["Carlos_Sainz"] = jsonContent[i].position;
                     continue;
                 case 23:
-                    driverResults["Alex Albon"] = jsonContent[i].position;
+                    driverResults["Alex_Albon"] = jsonContent[i].position;
                     continue;
                 case 31:
-                    driverResults["Esteban Ocon"] = jsonContent[i].position;
+                    driverResults["Esteban_Ocon"] = jsonContent[i].position;
                     continue;
                 case 87:
                     driverResults["Oliver_Bearman"] = jsonContent[i].position;
@@ -71,13 +68,6 @@ export async function pullDriverResults(){
                     console.log("Driver is not currently listed");
             }       
         }
-        return driverResults;
-        
-});
-}
-
-export function convertPosToPts(driverResults){
-    // transform position into points scored for ease of adding them to the DB
         Object.keys(driverResults).forEach(key => {
             switch(driverResults[key]){
                 case 1:
@@ -114,10 +104,12 @@ export function convertPosToPts(driverResults){
                     console.log('invaild position issue with fetching result data');
 
             }
-            return driverResults;
-        });
-        
+       
+});
+        return driverResults;
 }
+
+
     
 
 

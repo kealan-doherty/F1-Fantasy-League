@@ -8,15 +8,14 @@
     </head>
 
     <body class = "newUserBackground">
-            <h1 class = "newUserWelcome">Create your new account here!</h1>
-            <h2 class = "newUserWelcome"> Please Create your Account Below</h2>
+            
+            <form action = '/submit' id = "createAccount" method="post" class = 'signIn'>
+                <h1 class = "signInMess">Create your new account here!</h1>
+                <h2 class = "signInMess"> Please Create your Account Below</h2>
 
-            <form action = '/submit' id = "createAccount" method="post">
-                <input class = "input" type = "text" id = "username" name = "username" placeholder="Please Enter Your username here!">
-
-                <input class = "input" type = "password" id = "password" name = "password" placeholder="Please Creat Your Passowrd Here!">
-
-                <input class = "input" type = "password" id = "confirmPassword" name = "confirmPassword" placeholder="Please re-enter your password">
+                <input class = "returningUser" type = "text" id = "username" name = "username" placeholder="Please Enter Your username here!">
+                <input class = "returningUser" type = "password" id = "password" name = "password" placeholder="Please Creat Your Passowrd Here!">
+                <input class = "returningUser" type = "password" id = "confirmPassword" name = "confirmPassword" placeholder="Please re-enter your password">
                 
                 <input id = 'submit' type = "submit" value="submit" class = "newUserButton"></input>
             </form>

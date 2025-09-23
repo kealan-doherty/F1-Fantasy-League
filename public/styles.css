@@ -10,6 +10,9 @@ body {
     /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
     background: linear-gradient(to right, #434343, #000000);
     color: #fff; /* light text for dark background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #welcomePageBackground {
@@ -122,6 +125,12 @@ footer {
 }
 
 .signIn{
+    display: flex;
+    flex-direction: column;
+    align-items:center;
+    justify-content: center;
+    width: 400px;
+    height: 450px;
     padding: 1em;
     margin: 1em;
     text-align: center;
@@ -129,5 +138,19 @@ footer {
     border-radius: 5px;
     border: 1px solid #FF4500; 
     box-shadow: 0 0 5px #FF4500, 0 0 10px #FF4500;
+}
+
+.input{
+    display: block;
+    align-items: center;
+    box-shadow: 0 0 5px #FF4500, 0 0 10px #FF4500;
+    text-align: center;
+    height: 25px;
+    width: 200px;
+}
+
+.signInMess{
+    text-align: center;
+    color: #FF4500;
 }
 
