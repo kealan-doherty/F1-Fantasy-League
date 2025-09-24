@@ -2,7 +2,7 @@
 <html lang = 'en'>
     <head>
         <meta charset="utf-8">
-        <link rel="stylesheet" href="profilePage.css">
+        <link rel="stylesheet" href="styles.css">
         <title>Alter Your team!</title>
     </head>
 
@@ -18,55 +18,55 @@
         </script>
         
         <h1>Here you are able to creat/update your Fantasy F1 Team!</h1>
-        <form method = 'POST' action = '/updateTeam' >
-            <select id = "first_driver" name = 'first_driver'> 
+        <form method = 'POST' action = '/updateTeam' class = signIn >
+            <select id = "first_driver" name = 'first_driver' class = 'returningUser'> 
                 <option> First Driver </option>
-                <option value = 'Lewis_Hamlition'> lewis Hamlition</option>
-                <option value = 'Charles_Leclerc'> charles Leclerc </option>
-                <option value = 'Gerogre_Russell'> Geogre Russel</option>
-                <option value = 'Kimi_Antonelli'> Kimi Antonelli</option>
-                <option value = 'Max_Verstappen'> Max Verstappen</option>
-                <option value = 'Yuki_Tusonoda'> Yuki Tsuonoda</option>
-                <option value = 'Lando_Norris'> Lando Norris</option>
-                <option value = 'Oscar_Piastri'> Oscar Piastri</option>
-                <option value = 'Fernando_Alonso'> Fernando Alonso</option>
-                <option value = 'Lance_Stroll'> Lance Stroll</option>
-                <option value = 'Alex_Albon'> Alex Albon</option>
-                <option value = 'Carlos_Sainz'> Carlos Sainz</option>
-                <option value = 'Liam_Lawson'> Laim Lawson</option>
-                <option value = 'Isack_Hadjar'> Issac Hadjar</option>
-                <option value = 'Nico_Hulkenberg'> Nico Hulkenberg</option>
-                <option value = 'Gaberiello_Bortoleto'> Gaberiello Borteletto</option>
-                <option value = 'Esteban_Ocon'> Esetban Ocon</option>
-                <option value = 'Oliver_Bearman'> Oliver Bearman</option>
-                <option value = 'Pierre_Gasly'> Pierre Gasly</option>
-                <option value = 'Franco_Colapinato'> Franco Colipinato</option>
+                <option class = 'ferrari'value = 'Lewis_Hamlition'> lewis Hamlition</option>
+                <option class = 'ferrari' value = 'Charles_Leclerc'> charles Leclerc </option>
+                <option class = 'merc' value = 'Gerogre_Russell'> Geogre Russel</option>
+                <option class = 'merc' value = 'Kimi_Antonelli'> Kimi Antonelli</option>
+                <option class ='redBull'value = 'Max_Verstappen'> Max Verstappen</option>
+                <option class = 'redBull' value = 'Yuki_Tusonoda'> Yuki Tsuonoda</option>
+                <option class = 'mclaren' value = 'Lando_Norris'> Lando Norris</option>
+                <option class = 'mclaren' value = 'Oscar_Piastri'> Oscar Piastri</option>
+                <option class = 'aston' value = 'Fernando_Alonso'> Fernando Alonso</option>
+                <option class = 'aston' value = 'Lance_Stroll'> Lance Stroll</option>
+                <option class = 'williams' value = 'Alex_Albon'> Alex Albon</option>
+                <option class = 'williams' value = 'Carlos_Sainz'> Carlos Sainz</option>
+                <option class = 'racingBulls' value = 'Liam_Lawson'> Laim Lawson</option>
+                <option class = 'racingBulls' value = 'Isack_Hadjar'> Issac Hadjar</option>
+                <option class = 'sauber' value = 'Nico_Hulkenberg'> Nico Hulkenberg</option>
+                <option class = 'sauber' value = 'Gaberiello_Bortoleto'> Gaberiello Borteletto</option>
+                <option class = 'haas' value = 'Esteban_Ocon'> Esetban Ocon</option>
+                <option class = 'haas' value = 'Oliver_Bearman'> Oliver Bearman</option>
+                <option class = 'alpine' value = 'Pierre_Gasly'> Pierre Gasly</option>
+                <option class = 'alpine' value = 'Franco_Colapinato'> Franco Colipinato</option>
             </select>
 
-            <select id = "second_driver", name = 'second_driver'> 
+            <select id = "second_driver", name = 'second_driver' class = 'returningUser'> 
                 <option> Second Driver</option>
-                <option value = 'Lewis_Hamlition'> lewis Hamlition</option>
-                <option value = 'Charles_Leclerc'> charles Leclerc </option>
-                <option value = 'Gerogre_Russell'> Geogre Russel</option>
-                <option value = 'Kimi_Antonelli'> Kimi Antonelli</option>
-                <option value = 'Max_Verstappen'> Max Verstappen</option>
-                <option value = 'Yuki_Tusonoda'> Yuki Tsuonoda</option>
-                <option value = 'Lando_Norris'> Lando Norris</option>
-                <option value = 'Oscar_Piastri'> Oscar Piastri</option>
-                <option value = 'Fernando_Alonso'> Fernando Alonso</option>
-                <option value = 'Lance_Stroll'> Lance Stroll</option>
-                <option value = 'Alex_Albon'> Alex Albon</option>
-                <option value = 'Carlos_Sainz'> Carlos Sainz</option>
-                <option value = 'Liam_Lawson'> Laim Lawson</option>
-                <option value = 'Isack_Hadjar'> Issac Hadjar</option>
-                <option value = 'Nico_Hulkenberg'> Nico Hulkenberg</option>
-                <option value = 'Gaberiello_Bortoleto'> Gaberiello Borteletto</option>
-                <option value = 'Esteban_Ocon'> Esetban Ocon</option>
-                <option value = 'Oliver_Bearman'> Oliver Bearman</option>
-                <option value = 'Pierre_Gasly'> Pierre Gasly</option>
-                <option value = 'Franco_Colapinato'> Franco Colipinato</option>
+                <option class = 'ferrari'value = 'Lewis_Hamlition'> lewis Hamlition</option>
+                <option class = 'ferrari' value = 'Charles_Leclerc'> charles Leclerc </option>
+                <option class = 'merc' value = 'Gerogre_Russell'> Geogre Russel</option>
+                <option class = 'merc' value = 'Kimi_Antonelli'> Kimi Antonelli</option>
+                <option class ='redBull'value = 'Max_Verstappen'> Max Verstappen</option>
+                <option class = 'redBull' value = 'Yuki_Tusonoda'> Yuki Tsuonoda</option>
+                <option class = 'mclaren' value = 'Lando_Norris'> Lando Norris</option>
+                <option class = 'mclaren' value = 'Oscar_Piastri'> Oscar Piastri</option>
+                <option class = 'aston' value = 'Fernando_Alonso'> Fernando Alonso</option>
+                <option class = 'aston' value = 'Lance_Stroll'> Lance Stroll</option>
+                <option class = 'williams' value = 'Alex_Albon'> Alex Albon</option>
+                <option class = 'williams' value = 'Carlos_Sainz'> Carlos Sainz</option>
+                <option class = 'racingBulls' value = 'Liam_Lawson'> Laim Lawson</option>
+                <option class = 'racingBulls' value = 'Isack_Hadjar'> Issac Hadjar</option>
+                <option class = 'sauber' value = 'Nico_Hulkenberg'> Nico Hulkenberg</option>
+                <option class = 'sauber' value = 'Gaberiello_Bortoleto'> Gaberiello Borteletto</option>
+                <option class = 'haas' value = 'Esteban_Ocon'> Esetban Ocon</option>
+                <option class = 'haas' value = 'Oliver_Bearman'> Oliver Bearman</option>
+                <option class = 'alpine' value = 'Pierre_Gasly'> Pierre Gasly</option>
+                <option class = 'alpine' value = 'Franco_Colapinato'> Franco Colipinato</option>
             </select>
-            <input type = 'submit'>
+            <input type = 'submit' class = 'returningUser'>
         </form>
     </body>
 </html>

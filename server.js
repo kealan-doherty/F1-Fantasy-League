@@ -101,41 +101,23 @@ app.post('/username', async (req,res) => {
 });
 
 function updateScore(){
-    const today = new Date();
-    const day = today.getDay();
     fetch("https://api.openf1.org/v1/session_result?session_key=latest&position<=10")
         .then((response) => response.json())
         .then((jsonContent) => {
-            driverResults = pullDriverResults(jsonContent);
-            updatePts(driverResults);
-            
+            try{
+                driverResults = pullDriverResults(jsonContent);
+                updatePts(driverResults);
+            } catch (error){
+                console.error('error updating users points');
+            }
         });
-    if(day === 2){
-        try{
-           
-           // const drivers = await pullDriverResults();
-           // console.log(drivers);
-           // pullDriverResults(drivers);
-            //console.log(drivers);
-            //convertPosToPts(drivers);
-            
-           // updatePts(drivers);
-            //return 1
-        } catch (err){
-            console.log('error updating points after the race', err);
-            return -1 
-        }
-    }
-    
 }
 
 cron.schedule('0 18 * * 1', () => {
-    console.log('exec');
     updateScore();
 })
 
 app.listen(3000, () => {
-    updateScore();
     console.log("server is up and running");
 });
 
