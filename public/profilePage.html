@@ -20,27 +20,31 @@
         fetch('/userData')
             .then(response => response.json())
             .then(data => {
-
+                console.log(data.rows[0].username);
+                const username = `<div class = 'welcome'> Welcome ${data.rows[0].username} ! </div>`;
                 const first_driver = `<div class = 'userStats'> First Driver: ${data.rows[0].first_driver} </div>`;
                 const second_driver = `<div class = 'userStats'> Second Driver: ${data.rows[0].second_driver} </div>`;
                 const constrcutor = `<div class = 'userStats'> Constructor: ${data.rows[0].constructor} </div>`;
-                
+                const points = `<div class = 'userStats'> Total Points: ${data.rows[0].points} </div>`;
+                document.querySelector('.welcome').insertAdjacentHTML('beforeend', username);
                 document.querySelector('#userInfo').insertAdjacentHTML('beforeend', first_driver);
                 document.querySelector('#userInfo').insertAdjacentHTML('beforeend', second_driver);
                 document.querySelector('#userInfo').insertAdjacentHTML('beforeend', constrcutor);
+                document.querySelector('#userInfo').insertAdjacentHTML('beforeend', points);
             });
     </script>
 
-    <h1 class="welcome">Welcome!</h1>
-    
-    <div class="container">
-        <button class="alterTeam"><a href = 'Alterteam.html'>Alter line-up</button>
+    <div class = 'welcome'>
+
     </div>
 
     <div id="userInfo">
         <div class="userStats">Current Championship Standings:</div>
-        <div class="userStats">Total Season Points:</div>
         <div class="userStats">Points From The Last Grand Prix:</div>
+    </div>
+
+    <div class="container">
+        <button class="alterTeam"><a href = 'Alterteam.html'>Alter line-up</button>
     </div>
 
 </body>

@@ -6,18 +6,21 @@
         <title>Alter Your team!</title>
     </head>
 
-    <body id = 'updateTeam'>
+    <body id = 'welcomePageBackground'>
         <script>
         fetch('/userData')
             .then(response => response.json())
             .then(data => {
                 const username =`<h1>Welcome! ${data.rows[0].username} </h1>`;
-                document.querySelector('#updateTeam').insertAdjacentHTML('beforeend', username);
+                document.querySelector('.welcomeMessage').insertAdjacentHTML('beforeend', username);
 
             });
         </script>
-        
-        <h1>Here you are able to creat/update your Fantasy F1 Team!</h1>
+        <header class = 'welcomeMessage'>
+            <h1 class = 'welcomeMessage'>Here you are able to Create/update your Fantasy F1 Team!</h1>
+        </header>
+
+
         <form method = 'POST' action = '/updateTeam' class = signIn >
             <select id = "first_driver" name = 'first_driver' class = 'returningUser'> 
                 <option> First Driver </option>
@@ -66,6 +69,22 @@
                 <option class = 'alpine' value = 'Pierre_Gasly'> Pierre Gasly</option>
                 <option class = 'alpine' value = 'Franco_Colapinato'> Franco Colipinato</option>
             </select>
+
+            <select id = 'constructor', name = 'constructor' class = 'returningUser'>
+                <option> Constructor </option>
+                <option class = 'ferrari' value = 'ferrari'>ferrari</option>
+                <option class = 'redBull' value = 'Red_Bull'> Red Bull</option>
+                <option class = 'merc' value = 'Mercedes'> Mercedes</option>
+                <option class = 'mclaren' value = 'mclaren'> Mclaren</option>
+                <option class = 'aston' value = 'Aston_Martin'> Aston Martin</option>
+                <option class = 'racingBulls' value = 'Racing_Bulls'> Racing Bulls</option>
+                <option class = 'williams' value = 'Williams'> Williams</option>
+                <option class = 'haas' value = 'Haas'> Haas</options>
+                <option class = 'sauber' value = 'Sauber'> Sauber</option>
+                <option class = 'alpine' value = 'Alpine'> Alpine</option>
+            </select>
+
+
             <input type = 'submit' class = 'returningUser'>
         </form>
     </body>

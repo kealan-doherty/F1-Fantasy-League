@@ -121,6 +121,7 @@ footer {
 }
 
 .signIn{
+    display: flex;
     padding: 1em;
     margin: 1em;
     text-align: center;
@@ -129,6 +130,8 @@ footer {
     border: 1px solid #FF4500; 
     box-shadow: 0 0 5px #FF4500, 0 0 10px #FF4500;
     justify-content: center;
+    align-items: center;
+    flex-direction: column;
 }
 
 .merc{
