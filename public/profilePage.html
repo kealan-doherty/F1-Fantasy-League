@@ -21,12 +21,12 @@
             .then(response => response.json())
             .then(data => {
                 console.log(data.rows[0].username);
-                const username = `<div class = 'welcome'> Welcome ${data.rows[0].username} ! </div>`;
+                const username = `<div class = 'welcomeMessage'>${data.rows[0].username} ! </div>`;
                 const first_driver = `<div class = 'userStats'> First Driver: ${data.rows[0].first_driver} </div>`;
                 const second_driver = `<div class = 'userStats'> Second Driver: ${data.rows[0].second_driver} </div>`;
                 const constrcutor = `<div class = 'userStats'> Constructor: ${data.rows[0].constructor} </div>`;
                 const points = `<div class = 'userStats'> Total Points: ${data.rows[0].points} </div>`;
-                document.querySelector('.welcome').insertAdjacentHTML('beforeend', username);
+                document.querySelector('#welcomePageBackground').insertAdjacentHTML('beforeend', username);
                 document.querySelector('#userInfo').insertAdjacentHTML('beforeend', first_driver);
                 document.querySelector('#userInfo').insertAdjacentHTML('beforeend', second_driver);
                 document.querySelector('#userInfo').insertAdjacentHTML('beforeend', constrcutor);
@@ -34,9 +34,9 @@
             });
     </script>
 
-    <div class = 'welcome'>
-
-    </div>
+    <header id = 'welcomePageBackground'>
+        <h1 class = 'welcomeMessage'>Welcome!</h1>
+    </header>
 
     <div id="userInfo">
         <div class="userStats">Current Championship Standings:</div>
