@@ -36,10 +36,10 @@ export function disconnectDB(){
 }
     
 
-export function createNewUser(username,password){
-    const insertQuery = 'INSERT INTO public."USER INFO" (username, password) VALUES ($1, $2)';
+export function createNewUser(username,password, email){
+    const insertQuery = 'INSERT INTO public."USER INFO" (username, password, email) VALUES ($1, $2, $3)';
     const intitPts = 'UPDATE public."USER INFO" set points = 0 WHERE username = $1';
-    const values = [username, password];
+    const values = [username, password, email];
     const user = [username];
     try{
         const insertRes = client.query(insertQuery, values);

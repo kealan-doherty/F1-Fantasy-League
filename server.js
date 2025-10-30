@@ -36,7 +36,8 @@ app.post('/submit', async (req, res) => {
         res.send('<h1> Error Passwords Do not match Please try again</h1>');
     }
     hashedPassowrd = await bcrypt.hash(data.password, 10); 
-    createNewUser(username,hashedPassowrd);
+    hashedEmail = await bcrypt.hash(data.email, 10);
+    createNewUser(username,hashedPassowrd, hashedEmail);
     req.session.user = {username: username};
     req.session.save();
     res.sendFile('alterTeam.html', {root: path.join(__dirname, 'public')});
@@ -98,6 +99,20 @@ app.post('/username', async (req,res) => {
     } catch (error){
         console.error('error sending username to frontend', error); 
     }
+});
+
+app.post('/resetPassword', async (req,res) => {
+    // here will create the reset token and send it to the user
+    const email = req.body.email;
+    const userData = await pullUserDatabyEmail(email); // this SQL function still needs to be written. 
+    const pulledEmail = userData.rows[0].email;
+    if(await bcrypt.compare(data = email, hashedEmail = pulledEmail) == true){
+        // will not tell the user if the email exists in the DB or not for security reasons
+        // generate secure token here using brcyt and give it expiration date and send to user
+        // one app email is generated and begin developing UI for updating the password and storing it
+        // within the DB
+    } 
+    
 });
 
 function updateScore(){
