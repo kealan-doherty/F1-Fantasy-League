@@ -110,8 +110,8 @@ export function updatePts(driverResults){
 
 export function pullUserCode(email){
     const values = [email];
-    const selectQuery = 'SELECT username, code FROM "USER INFO" WHERE email = $1';
-    const selectRes = client.query(selectQuery,values);
+    const selectQuery = 'SELECT * FROM "USER INFO" WHERE email = $1';
+    const selectRes = client.query(selectQuery, values);
     return selectRes;
 
 }

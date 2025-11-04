@@ -123,24 +123,31 @@ app.post('/username', async (req,res) => {
     }
 });
 
-app.post('/resetPassword', async (req,res) => {
+app.post('/resetInfo', async (req,res) => {
+    console.log('hi');
     // while app isn't deployed reset password will be now via a code entered by the user Once
     // app is deployed I will fully correct to have industy standard reset function 
-    const email = req.body.email;
-    const hashEmail = await bcrypt.hash(email,10);
+   
+    const username = req.body.username;
+    console.log(username);
     const code = req.body.code;
-    const userData = pullUserCode(hashEmail); 
+    hashedCode = await bcrypt.hash(code,10);
+    const userData = await pullTeam(username); 
     const pulledCode = userData.rows[0].code;
-    const username = userData.rows[0].username;
-    try{
-        if(await bcrypt.compare(data = code, hashedcode = pulledCode) == true){
-        req.session.user = {username: username};
-        req.session.save();
-        res.redirect('/updatePassword');
-    } 
-    } catch(error){
-        console.error('eror confirming code', error);
-    }
+
+    res.json(userData);
+    
+    
+    
+   // try{
+     //   if(await bcrypt.compare(data = code, hashedcode = pulledCode) == true){
+       // req.session.user = {username: username};
+       // req.session.save();
+       // res.redirect('/updatePassword');
+    //} 
+   // } catch(error){
+   //     console.error('eror confirming code', error);
+   // }
 });
 
 function updateScore(){
