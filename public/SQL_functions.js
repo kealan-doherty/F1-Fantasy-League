@@ -36,10 +36,10 @@ export function disconnectDB(){
 }
     
 
-export function createNewUser(username,password, email){
-    const insertQuery = 'INSERT INTO public."USER INFO" (username, password, email) VALUES ($1, $2, $3)';
+export function createNewUser(username,password, email,code){
+    const insertQuery = 'INSERT INTO public."USER INFO" (username, password, email, code) VALUES ($1, $2, $3, $4)';
     const intitPts = 'UPDATE public."USER INFO" set points = 0 WHERE username = $1';
-    const values = [username, password, email];
+    const values = [username, password, email, code];
     const user = [username];
     try{
         const insertRes = client.query(insertQuery, values);
@@ -88,7 +88,6 @@ export function pullTeam(username){
     const values = [username];
     const selectQuery = 'SELECT * FROM "USER INFO" WHERE username = $1';
     const selectRes = client.query(selectQuery, values);
-    console.log(selectRes);
     return selectRes;
 }
 
@@ -106,5 +105,27 @@ export function updatePts(driverResults){
         console.error('error updating user race results');
     }
    
+}
+
+
+export function pullUserCode(email){
+    const values = [email];
+    const selectQuery = 'SELECT username, code FROM "USER INFO" WHERE email = $1';
+    const selectRes = client.query(selectQuery,values);
+    return selectRes;
+
+}
+
+
+export function updatePassword(username, hashedPassowrd){
+    const values = [hashedPassowrd,username];
+    const updateQuery = 'UPDATE public."USER INFO" set password = $1 WHERE username = $2';
+    try{
+        const UpdateRes = client.query(updateQuery,values);
+        return UpdateRes.rowCount;
+    } catch (error){
+        console.error("error updating password:", error);
+        return -1;
+    }
 }
 

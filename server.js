@@ -1,13 +1,15 @@
 require('dotenv').config();
+const crypto = require('crypto');
 const bcrypt = require('bcrypt');
 const cron = require('node-cron');
 const bodyParser = require('body-parser');
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
-const { connectDb, createNewUser, pullUserData, pullDrivers, pullTeam, updateConstrcutor, updateDrivers, updatePts } = require('./public/SQL_functions');
+const { connectDb, createNewUser, pullUserData, pullDrivers, pullTeam, updateConstrcutor, updateDrivers, updatePts,pullUserCode } = require('./public/SQL_functions');
 const { pullDriverResults, convertPosToPts } = require('./public/pullRaceResults');
 const { js } = require('three/tsl');
+const { genPasswordToken } = require('./generatePasswordToken'); 
 const app = express();
 
 
@@ -37,12 +39,26 @@ app.post('/submit', async (req, res) => {
     }
     hashedPassowrd = await bcrypt.hash(data.password, 10); 
     hashedEmail = await bcrypt.hash(data.email, 10);
-    createNewUser(username,hashedPassowrd, hashedEmail);
+    hashedCode = await bcrypt.hash(data.passResetCode,10);
+    createNewUser(username,hashedPassowrd, hashedEmail,hashedCode);
     req.session.user = {username: username};
     req.session.save();
     res.sendFile('alterTeam.html', {root: path.join(__dirname, 'public')});
     
 });
+
+
+app.post('/resetPasswordConfirm', async (req,res) => {
+    const data = req.body;
+    const username = req.session.user.username;
+    if(data.password != data.confirmPassword){
+        res.send('<h1> ERROR PASSWORDS DO NOT MATCH </h1>');
+    }
+    hashedPassowrd = await bcrypt.hash(data.password,10);
+    await updatePassword(username, hashedPassowrd);
+    res.send('<h1> Password successfully changed please return to login screen </h1>');
+    
+})
 
 app.post('/sign-in', async (req, res) => {
     const username = req.body.username;
@@ -64,6 +80,12 @@ app.get('/profilePage', async (req,res) => {
     res.sendFile('profilePage.html', {root: path.join(__dirname, 'public')});
 
 });
+
+app.get('/updatePassword', async (req,res) => {
+    res.sendFile('updatePassword.html', {root: path.join(__dirname, 'public')});
+
+});
+
 
 app.get('/userData', async (req,res) => {
     try{
@@ -102,17 +124,23 @@ app.post('/username', async (req,res) => {
 });
 
 app.post('/resetPassword', async (req,res) => {
-    // here will create the reset token and send it to the user
+    // while app isn't deployed reset password will be now via a code entered by the user Once
+    // app is deployed I will fully correct to have industy standard reset function 
     const email = req.body.email;
-    const userData = await pullUserDatabyEmail(email); // this SQL function still needs to be written. 
-    const pulledEmail = userData.rows[0].email;
-    if(await bcrypt.compare(data = email, hashedEmail = pulledEmail) == true){
-        // will not tell the user if the email exists in the DB or not for security reasons
-        // generate secure token here using brcyt and give it expiration date and send to user
-        // one app email is generated and begin developing UI for updating the password and storing it
-        // within the DB
+    const hashEmail = await bcrypt.hash(email,10);
+    const code = req.body.code;
+    const userData = pullUserCode(hashEmail); 
+    const pulledCode = userData.rows[0].code;
+    const username = userData.rows[0].username;
+    try{
+        if(await bcrypt.compare(data = code, hashedcode = pulledCode) == true){
+        req.session.user = {username: username};
+        req.session.save();
+        res.redirect('/updatePassword');
     } 
-    
+    } catch(error){
+        console.error('eror confirming code', error);
+    }
 });
 
 function updateScore(){
