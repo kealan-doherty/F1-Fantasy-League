@@ -1,26 +1,37 @@
-Welcome to my verison of F1 Fantasy. which is a padory off the offical F1 Fantasy app. 
+# F1 Fantasy League
 
-    Tech Stack used: 
-                    JavaSctipt
-                    Express.js,
-                    Postgres,
-                    CSS/HTML,
-                    OpenF1 API (For Race and Quali Data) https://github.com/br-g/openf1
+## Overview
+The F1 Fantasy League project is a web-based application that allows users to create, manage, and participate in fantasy leagues based on Formula 1 racing. Users can form teams, compete with others, and track their points based on real race outcomes.
 
-In this web application you will be able to create your team of 2 current F1 drivers and 1 cosntuctor and play for points to see how can create the ulitmate F1 dream team. 
+## Features
+- **User Registration and Authentication**: Users can register, log in, and manage their accounts securely.
+- **League Management**: Create and manage fantasy leagues, including inviting friends and setting league rules.
+- **Team Creation**: Users can draft drivers and constructors for their fantasy teams.
+- **Real-Time Scoring**: The application updates user scores based on real-time race results.
 
+## Technology Stack
+- **Frontend**: React.js for building the user interface.
+- **Backend**: Node.js with Express for the server-side logic.
+- **Database**: MongoDB for data storage.
 
-Current Status: 
+## Getting Started
+1. **Clone the Repository**:
+   ```bash
+   git clone https://github.com/kealan-doherty/F1-Fantasy-League.git
+   ```
+2. **Install Dependencies**:
+   Navigate to the project directory and install the necessary dependencies:
+   ```bash
+   npm install
+   ```
+3. **Start the Development Server**:
+   ```bash
+   npm start
+   ```
+   Access the application at `http://localhost:3000`.
 
-              Users are now able to see their current team line up upon signing into their account.
-              They are also now able to update their teams and how there changes show up in the Profile Page
-              
+## Contributing
+Contributions are welcome! Please submit a pull request or open an issue for discussions.
 
-
-Next steps: 
-
-            Route new users to a page where they are able to select their intial team. 
-            also to find a F1 API to pull Qualifying, Overtakes, and Finishing Position Data 
-            to Update their points. 
-
-            Also make more updates to UI and styling to provide a cleaner more professional look!
+## License
+This project is licensed under the MIT License. See the LICENSE file for more details.
