@@ -1,15 +1,20 @@
-require('dotenv').config();
-const crypto = require('crypto');
-const bcrypt = require('bcrypt');
-const cron = require('node-cron');
-const bodyParser = require('body-parser');
-const express = require('express');
-const session = require('express-session');
-const path = require('path');
-const { connectDb, createNewUser, pullUserData, pullDrivers, pullTeam, updateConstrcutor, updateDrivers, updatePts,pullUserCode } = require('./public/SQL_functions');
-const { pullDriverResults, convertPosToPts } = require('./public/pullRaceResults');
-const { js } = require('three/tsl');
-const { genPasswordToken } = require('./generatePasswordToken'); 
+import 'dotenv/config';
+import crypto from 'crypto';
+import bcrypt from 'bcrypt';
+import cron from 'node-cron';
+import bodyParser from 'body-parser';
+import express from 'express';
+import session from 'express-session';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { connectDb, createNewUser, pullUserData, pullDrivers, pullTeam, updateConstrcutor, updateDrivers, updatePts, pullUserCode } from './public/SQL_functions.js';
+import { pullDriverResults, convertPosToPts } from './public/pullRaceResults.js';
+import { genPasswordToken } from './generatePasswordToken.js';
+import { updatePassword } from './public/SQL_functions.js';
+import { updateScore, requireAuth} from './middleware.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const app = express();
 
 
@@ -49,6 +54,7 @@ app.post('/submit', async (req, res) => {
 
 
 app.post('/resetPasswordConfirm', async (req,res) => {
+    requireAuth(req,res);
     const data = req.body;
     const username = req.session.user.username;
     if(data.password != data.confirmPassword){
@@ -78,12 +84,11 @@ app.post('/sign-in', async (req, res) => {
 
 app.get('/profilePage', async (req,res) => {
     res.sendFile('profilePage.html', {root: path.join(__dirname, 'public')});
-
 });
 
 app.get('/updatePassword', async (req,res) => {
+    requireAuth(req,res);
     res.sendFile('updatePassword.html', {root: path.join(__dirname, 'public')});
-
 });
 
 
@@ -98,6 +103,7 @@ app.get('/userData', async (req,res) => {
 });
 
 app.post('/updateTeam', async (req,res) => {
+    requireAuth(req,res);
     const username = req.session.user.username;
     const newDriverOne = req.body.first_driver;
     const newDriverTwo = req.body.second_driver;
@@ -109,11 +115,11 @@ app.post('/updateTeam', async (req,res) => {
     } catch (err){
         console.error("error occured in updating team", err.message);
     }
-    res.redirect('/ProfilePage');
-
+    res.sendFile('profilePage.html', {root: path.join(__dirname, 'public')});
 });
 
 app.post('/username', async (req,res) => {
+    requireAuth(req,res);
     const data = req.session.user.username;
     console.log(data);
     try{
@@ -149,19 +155,6 @@ app.post('/resetInfo', async (req,res) => {
    //     console.error('eror confirming code', error);
    // }
 });
-
-function updateScore(){
-    fetch("https://api.openf1.org/v1/session_result?session_key=latest&position<=10")
-        .then((response) => response.json())
-        .then((jsonContent) => {
-            try{
-                driverResults = pullDriverResults(jsonContent);
-                updatePts(driverResults);
-            } catch (error){
-                console.error('error updating users points');
-            }
-        });
-}
 
 cron.schedule('0 18 * * 1', () => {
     updateScore();
