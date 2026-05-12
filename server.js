@@ -17,7 +17,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
 
-
 const secret = process.env.SESSION_SERCRET;
 
 app.use(express.json());
@@ -52,9 +51,7 @@ app.post('/submit', async (req, res) => {
     
 });
 
-
-app.post('/resetPasswordConfirm', async (req,res) => {
-    requireAuth(req,res);
+app.post('/resetPasswordConfirm', requireAuth, async (req,res) => {
     const data = req.body;
     const username = req.session.user.username;
     if(data.password != data.confirmPassword){
@@ -85,9 +82,7 @@ app.post('/sign-in', async (req, res) => {
 app.get('/profilePage', async (req,res) => {
     res.sendFile('profilePage.html', {root: path.join(__dirname, 'public')});
 });
-
-app.get('/updatePassword', async (req,res) => {
-    requireAuth(req,res);
+app.get('/updatePassword', requireAuth, async (req,res) => {
     res.sendFile('updatePassword.html', {root: path.join(__dirname, 'public')});
 });
 
@@ -101,9 +96,7 @@ app.get('/userData', async (req,res) => {
         console.error('error sending teams data', error);
     }
 });
-
-app.post('/updateTeam', async (req,res) => {
-    requireAuth(req,res);
+app.post('/updateTeam', requireAuth, async (req,res) => {
     const username = req.session.user.username;
     const newDriverOne = req.body.first_driver;
     const newDriverTwo = req.body.second_driver;
@@ -115,11 +108,9 @@ app.post('/updateTeam', async (req,res) => {
     } catch (err){
         console.error("error occured in updating team", err.message);
     }
-    res.sendFile('profilePage.html', {root: path.join(__dirname, 'public')});
-});
 
-app.post('/username', async (req,res) => {
-    requireAuth(req,res);
+});
+app.post('/username', requireAuth, async (req,res) => {
     const data = req.session.user.username;
     console.log(data);
     try{

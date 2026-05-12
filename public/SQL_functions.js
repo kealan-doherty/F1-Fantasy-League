@@ -21,6 +21,7 @@ export async function connectDb(){
         console.log("Connected to database");
     } catch (err) {
         console.error("error connecting to the database", err);
+        return -1;
     }
 
 
@@ -42,6 +43,7 @@ export async function createNewUser(username,password, email,code){
     const intitPts = 'UPDATE public."USER INFO" set points = 0 WHERE username = $1';
     const values = [username, password, email, code];
     const user = [username];
+
     try{
         const insertRes = await client.query(insertQuery, values);
         const ptsRes = client.query(intitPts, user);
@@ -55,13 +57,21 @@ export async function createNewUser(username,password, email,code){
 export async function pullUserData(username){
     const values = [username];
     const selectQuery = 'SELECT password FROM public."USER INFO" WHERE username = $1';
-    const selectRes = client.query(selectQuery, values);
-    return selectRes;
+
+    try{
+        const selectRes = client.query(selectQuery, values);
+        return selectRes;
     }
+    catch (error) {
+        console.error("Error pulling user data", error);
+        return -1;
+    }
+}
 
 export async function updateDrivers(username, driver_one, driver_two){
     const values = [driver_one, driver_two, username]; 
     const updateQuery = `UPDATE public."USER INFO" SET first_driver = $1, second_driver = $2 WHERE username = $3`;
+
     try {
         const updateRes = await client.query(updateQuery, values);
         return updateRes.rowCount; 
@@ -75,6 +85,7 @@ export async function updateDrivers(username, driver_one, driver_two){
 export async function updateConstructor(username, newConstructor){
     const values = [newConstructor, username];
     const updateQuery = 'UPDATE public."USER INFO" SET constructor = $1 WHERE username = $2';
+
     try{
         const updateRes = await client.query(updateQuery,values);
         return updateRes.rowCount;
@@ -88,9 +99,16 @@ export async function updateConstructor(username, newConstructor){
 export async function pullTeam(username){
     const values = [username];
     const selectQuery = 'SELECT * FROM "USER INFO" WHERE username = $1';
-    const selectRes = await client.query(selectQuery, values);
-    return selectRes;
+
+    try{
+        const selectRes = await client.query(selectQuery, values);
+        return selectRes;
+    } catch (error) {
+        console.error("error pulling team data", error);
+        return -1;
+    }   
 }
+    
 
 export async function updatePts(driverResults){
     // ensure this function is working correctly!!!
@@ -103,7 +121,8 @@ export async function updatePts(driverResults){
                 const updatePtstwo = await client.query(updateQuertTwo,values);
             }
     } catch (error) {
-        console.error('error updating user race results');
+        console.error('error updating user race results', error);
+        return -1;
     }
    
 }
@@ -113,8 +132,13 @@ export async function pullUserCode(email){
     const values = [email];
     const selectQuery = 'SELECT * FROM "USER INFO" WHERE email = $1';
 
-    const selectRes = await client.query(selectQuery, values);
-    return selectRes;
+    try{
+        const selectRes = await client.query(selectQuery, values);
+        return selectRes
+    } catch (error) {
+        console.error("error pulling user code", error);
+        return -1;
+    }
 
 }
 
@@ -122,6 +146,7 @@ export async function pullUserCode(email){
 export async function updatePassword(username, hashedPassowrd){
     const values = [hashedPassowrd,username];
     const updateQuery = 'UPDATE public."USER INFO" set password = $1 WHERE username = $2';
+
     try{
         const UpdateRes = await client.query(updateQuery,values);
         return UpdateRes.rowCount;
