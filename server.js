@@ -38,18 +38,18 @@ app.get('/', (req, res) => {
 app.post('/submit', async (req, res) => {
     const data = req.body;
     const username = data.username;
+    const email = data.email;
     if(data.password != data.confirmPassword){
-        res.send('<h1> Error Passwords Do not match Please try again</h1>');
+        return res.send('<h1> Error Passwords Do not match Please try again</h1>');
     }
 
     const hashedPassowrd = await bcrypt.hash(data.password, 10); 
-    const hashedEmail = await bcrypt.hash(data.email, 10);
     const hashedCode = await bcrypt.hash(data.passResetCode,10);
 
-    createNewUser(username,hashedPassowrd, hashedEmail,hashedCode);
+    createNewUser(username,hashedPassowrd, email,hashedCode);
     req.session.user = {username: username};
     req.session.save();
-    res.sendFile('alterTeam.html', {root: path.join(__dirname, 'public')});
+    return res.sendFile('alterTeam.html', {root: path.join(__dirname, 'public')});
     
 });
 
@@ -57,11 +57,11 @@ app.post('/resetPasswordConfirm', requireAuth, async (req,res) => {
     const data = req.body;
     const username = req.session.user.username;
     if(data.password != data.confirmPassword){
-        res.send('<h1> ERROR PASSWORDS DO NOT MATCH </h1>');
+        return res.send('<h1> ERROR PASSWORDS DO NOT MATCH </h1>');
     }
     const hashedPassowrd = await bcrypt.hash(data.password,10);
     await updatePassword(username, hashedPassowrd);
-    res.send('<h1> Password successfully changed please return to login screen </h1>');
+    return res.send('<h1> Password successfully changed please return to login screen </h1>');
     
 })
 
@@ -70,14 +70,17 @@ app.post('/sign-in', async (req, res) => {
     const password = req.body.password;
     
     const userData = await pullUserData(username);
+    if (!userData || userData === -1 || userData.rows.length === 0) {
+        return res.send("<h1> Inncorrect Username or Password please Try Again </h1>");
+    }
     const pulledPassword = userData.rows[0].password;
     
-    if( await bcrypt.compare(data = password, hashedPassowrd = pulledPassword) == true){
+    if (await bcrypt.compare(password, pulledPassword)) {
          req.session.user = {username: username};
          req.session.save();
-         res.redirect('/profilePage');
+         return res.redirect('/profilePage');
     } else {
-         res.send("<h1> Inncorrect Username or Password please Try Again </h1>");
+         return res.send("<h1> Inncorrect Username or Password please Try Again </h1>");
     }
 });
 
@@ -125,29 +128,37 @@ app.post('/username', requireAuth, async (req,res) => {
     }
 });
 
-app.post('/resetInfo', requireAuth, async (req,res) => {
-    console.log('reset info endpoint hit');
-    // while app isn't deployed reset password will be now via a code entered by the user Once
-    // app is deployed I will fully correct to have industy standard reset function 
-   
+app.post('/resetInfo', async (req,res) => {
     const username = req.body.username;
     const code = req.body.code;
-    const hashedCode = await bcrypt.hash(code,10);
-    const userData = await pullTeam(username); 
-    const pulledCode = userData.rows[0].code;
 
-   // try{
-     //   if(await bcrypt.compare(data = code, hashedcode = pulledCode) == true){
-       // req.session.user = {username: username};
-       // req.session.save();
-       // res.redirect('/updatePassword');
-    //} 
-   // } catch(error){
-   //     console.error('eror confirming code', error);
-   // }
+    if (!username || !code) {
+        return res.status(400).send('<h1> Username and code are required </h1>');
+    }
+
+    try {
+        const userData = await pullTeam(username);
+        if (!userData || userData === -1 || userData.rows.length === 0) {
+            return res.send("<h1> Inncorrect Code please Try Again </h1>");
+        }
+
+        const pulledCode = userData.rows[0].code;
+        const isValidCode = await bcrypt.compare(code, pulledCode);
+
+        if (isValidCode) {
+            req.session.user = {username: username};
+            req.session.save();
+            return res.redirect('/updatePassword');
+        }
+
+        return res.send("<h1> Inncorrect Code please Try Again </h1>");
+    } catch(error) {
+        console.error('error confirming code', error);
+        return res.status(500).send('<h1> Error confirming reset code </h1>');
+    }
 });
 
-cron.schedule('0 18 * * 1', () => {
+cron.schedule('0 18 * * 0', () => {
     updateScore();
 })
 
