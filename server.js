@@ -7,11 +7,9 @@ import express from 'express';
 import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { connectDb, createNewUser, pullUserData, pullTeam, updateConstructor, updateDrivers, updatePts, pullUserCode } from './public/SQL_functions.js';
-import { convertPosToPts } from './public/pullRaceResults.js';
-import { genPasswordToken } from './generatePasswordToken.js';
+import { connectDb, createNewUser, pullUserData, pullTeam, updateConstructor, updateDrivers, updatePts } from './public/SQL_functions.js';
 import { updatePassword } from './public/SQL_functions.js';
-import { updateScore, requireAuth} from './middleware.js';
+import { updateScore, requireAuth } from './middleware.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -25,7 +23,7 @@ app.use(session({
     secret: secret,
     resave: false,
     saveUninitialized: false,
-    cookie: {secure: false, httpOnly: true, maxAge: 360000}
+    cookie: {secure: true, httpOnly: true, maxAge: 3600000}
 }));
 
 connectDb();
@@ -46,7 +44,7 @@ app.post('/submit', async (req, res) => {
     const hashedPassowrd = await bcrypt.hash(data.password, 10); 
     const hashedCode = await bcrypt.hash(data.passResetCode,10);
 
-    createNewUser(username,hashedPassowrd, email,hashedCode);
+    await createNewUser(username,hashedPassowrd, email,hashedCode);
     req.session.user = {username: username};
     req.session.save();
     return res.sendFile('alterTeam.html', {root: path.join(__dirname, 'public')});

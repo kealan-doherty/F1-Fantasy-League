@@ -17,16 +17,16 @@ export function pullDriverResults(jsonContent){
                     driverResults["Lando_Norris"] = jsonContent[i].position;
                     continue;
                 case 16:
-                    driverResults["Charles_Lerlerc"] = jsonContent[i].position;
+                    driverResults["Charles_Leclerc"] = jsonContent[i].position;
                     continue;
                 case 44:
                     driverResults["Lewis_Hamilton"] = jsonContent[i].position;
                     continue;
                 case 63:
-                    driverResults["Geogre_Russell"] = jsonContent[i].position;
+                    driverResults["George_Russell"] = jsonContent[i].position;
                     continue;
                 case 12:
-                    driverResults["Kimi_Antinelli"] = jsonContent[i].position;
+                    driverResults["Kimi_Antonelli"] = jsonContent[i].position;
                     continue;
                 case 18:
                     driverResults["Lance_Stroll"] = jsonContent[i].position;

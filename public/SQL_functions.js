@@ -14,7 +14,6 @@ const name = process.env.DB_NAME;
         port: 5432,
     })
 
-
 export async function connectDb(){
     try {
         const client = await pool.connect();
@@ -97,7 +96,7 @@ export async function updateConstructor(username, newConstructor){
 
 export async function pullTeam(username){
     const values = [username];
-    const selectQuery = 'SELECT * FROM "USER INFO" WHERE username = $1';
+    const selectQuery = 'SELECT * FROM public."USER INFO" WHERE username = $1';
 
     try{
         const selectRes = await pool.query(selectQuery, values);
@@ -127,7 +126,7 @@ export async function updatePts(driverResults){
 
 export async function pullUserCode(email){
     const values = [email];
-    const selectQuery = 'SELECT * FROM "USER INFO" WHERE email = $1';
+    const selectQuery = 'SELECT * FROM public."USER INFO" WHERE email = $1';
 
     try{
         const selectRes = await pool.query(selectQuery, values);
