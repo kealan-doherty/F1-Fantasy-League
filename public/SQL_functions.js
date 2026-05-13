@@ -46,7 +46,7 @@ export async function createNewUser(username,password, email,code){
 
     try{
         const insertRes = await client.query(insertQuery, values);
-        const ptsRes = client.query(intitPts, user);
+        const ptsRes = await client.query(intitPts, user);
         return insertRes.rowCount;
     } catch (error){
         console.error("Error creating profile", error);

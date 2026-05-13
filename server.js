@@ -7,8 +7,8 @@ import express from 'express';
 import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { connectDb, createNewUser, pullUserData, pullDrivers, pullTeam, updateConstrcutor, updateDrivers, updatePts, pullUserCode } from './public/SQL_functions.js';
-import { pullDriverResults, convertPosToPts } from './public/pullRaceResults.js';
+import { connectDb, createNewUser, pullUserData, pullTeam, updateConstructor, updateDrivers, updatePts, pullUserCode } from './public/SQL_functions.js';
+import { convertPosToPts } from './public/pullRaceResults.js';
 import { genPasswordToken } from './generatePasswordToken.js';
 import { updatePassword } from './public/SQL_functions.js';
 import { updateScore, requireAuth} from './middleware.js';
@@ -41,9 +41,11 @@ app.post('/submit', async (req, res) => {
     if(data.password != data.confirmPassword){
         res.send('<h1> Error Passwords Do not match Please try again</h1>');
     }
+
     hashedPassowrd = await bcrypt.hash(data.password, 10); 
     hashedEmail = await bcrypt.hash(data.email, 10);
     hashedCode = await bcrypt.hash(data.passResetCode,10);
+
     createNewUser(username,hashedPassowrd, hashedEmail,hashedCode);
     req.session.user = {username: username};
     req.session.save();
@@ -79,7 +81,7 @@ app.post('/sign-in', async (req, res) => {
     }
 });
 
-app.get('/profilePage', async (req,res) => {
+app.get('/profilePage', requireAuth, async (req,res) => {
     res.sendFile('profilePage.html', {root: path.join(__dirname, 'public')});
 });
 app.get('/updatePassword', requireAuth, async (req,res) => {
@@ -87,7 +89,7 @@ app.get('/updatePassword', requireAuth, async (req,res) => {
 });
 
 
-app.get('/userData', async (req,res) => {
+app.get('/userData', requireAuth, async (req,res) => {
     try{
         const username = req.session.user.username;
         const data = await pullTeam(username);
@@ -96,11 +98,13 @@ app.get('/userData', async (req,res) => {
         console.error('error sending teams data', error);
     }
 });
+
 app.post('/updateTeam', requireAuth, async (req,res) => {
     const username = req.session.user.username;
     const newDriverOne = req.body.first_driver;
     const newDriverTwo = req.body.second_driver;
     const newConstructor = req.body.constructor;
+
     try{
         await updateConstrcutor(username, newConstructor);
         await updateDrivers(username, newDriverOne, newDriverTwo);
@@ -120,7 +124,7 @@ app.post('/username', requireAuth, async (req,res) => {
     }
 });
 
-app.post('/resetInfo', async (req,res) => {
+app.post('/resetInfo', requireAuth, async (req,res) => {
     console.log('hi');
     // while app isn't deployed reset password will be now via a code entered by the user Once
     // app is deployed I will fully correct to have industy standard reset function 
@@ -131,10 +135,6 @@ app.post('/resetInfo', async (req,res) => {
     hashedCode = await bcrypt.hash(code,10);
     const userData = await pullTeam(username); 
     const pulledCode = userData.rows[0].code;
-
-    res.json(userData);
-    
-    
     
    // try{
      //   if(await bcrypt.compare(data = code, hashedcode = pulledCode) == true){
