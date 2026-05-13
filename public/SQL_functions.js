@@ -1,12 +1,12 @@
 import 'dotenv/config';
-import { Client, Pool } from 'pg';
+import { Pool } from 'pg';
 
 const key = process.env.DB_KEY;
 const host = process.env.DB_HOST;
 const user = process.env.DB_USER;
 const name = process.env.DB_NAME;
 
- export const client = new Client({
+ export const pool = new Pool({
         user: user,
         host: host,
         database: name,
@@ -17,7 +17,8 @@ const name = process.env.DB_NAME;
 
 export async function connectDb(){
     try {
-        await client.connect();
+        const client = await pool.connect();
+        client.release();
         console.log("Connected to database");
     } catch (err) {
         console.error("error connecting to the database", err);
@@ -29,7 +30,7 @@ export async function connectDb(){
 
 export async function disconnectDB(){
     try{
-        await client.end();
+        await pool.end();
     } catch(error){
         console.error('Failed to disconnect from the Database', error);
     }
@@ -37,7 +38,6 @@ export async function disconnectDB(){
     console.log('disconnected from the Database');
 }
     
-
 export async function createNewUser(username,password, email,code){
     const insertQuery = 'INSERT INTO public."USER INFO" (username, password, email, code) VALUES ($1, $2, $3, $4)';
     const intitPts = 'UPDATE public."USER INFO" set points = 0 WHERE username = $1';
@@ -45,8 +45,8 @@ export async function createNewUser(username,password, email,code){
     const user = [username];
 
     try{
-        const insertRes = await client.query(insertQuery, values);
-        const ptsRes = await client.query(intitPts, user);
+        const insertRes = await pool.query(insertQuery, values);
+        const ptsRes = await pool.query(intitPts, user);
         return insertRes.rowCount;
     } catch (error){
         console.error("Error creating profile", error);
@@ -59,7 +59,7 @@ export async function pullUserData(username){
     const selectQuery = 'SELECT password FROM public."USER INFO" WHERE username = $1';
 
     try{
-        const selectRes = await client.query(selectQuery, values);
+        const selectRes = await pool.query(selectQuery, values);
         return selectRes;
     }
     catch (error) {
@@ -73,7 +73,7 @@ export async function updateDrivers(username, driver_one, driver_two){
     const updateQuery = `UPDATE public."USER INFO" SET first_driver = $1, second_driver = $2 WHERE username = $3`;
 
     try {
-        const updateRes = await client.query(updateQuery, values);
+        const updateRes = await pool.query(updateQuery, values);
         return updateRes.rowCount; 
     } catch (error) {
         console.error("Error updating drivers:", error);
@@ -81,13 +81,12 @@ export async function updateDrivers(username, driver_one, driver_two){
     }
 }
 
-
 export async function updateConstructor(username, newConstructor){
     const values = [newConstructor, username];
     const updateQuery = 'UPDATE public."USER INFO" SET constructor = $1 WHERE username = $2';
 
     try{
-        const updateRes = await client.query(updateQuery,values);
+        const updateRes = await pool.query(updateQuery,values);
         return updateRes.rowCount;
     } catch (error){
         console.error("error updating the constructor", error);
@@ -101,7 +100,7 @@ export async function pullTeam(username){
     const selectQuery = 'SELECT * FROM "USER INFO" WHERE username = $1';
 
     try{
-        const selectRes = await client.query(selectQuery, values);
+        const selectRes = await pool.query(selectQuery, values);
         return selectRes;
     } catch (error) {
         console.error("error pulling team data", error);
@@ -109,7 +108,6 @@ export async function pullTeam(username){
     }   
 }
     
-
 export async function updatePts(driverResults){
     // ensure this function is working correctly!!!
     const updateQueryOne = 'UPDATE public."USER INFO" set points = points + $2 WHERE first_driver = $1';
@@ -117,8 +115,8 @@ export async function updatePts(driverResults){
         try{
             for (const key in driverResults){
                 const values = [key,driverResults[key]];
-                const updatePtsOne = await client.query(updateQueryOne,values);
-                const updatePtstwo = await client.query(updateQuertTwo,values);
+                const updatePtsOne = await pool.query(updateQueryOne,values);
+                const updatePtstwo = await pool.query(updateQuertTwo,values);
             }
     } catch (error) {
         console.error('error updating user race results', error);
@@ -127,13 +125,12 @@ export async function updatePts(driverResults){
    
 }
 
-
 export async function pullUserCode(email){
     const values = [email];
     const selectQuery = 'SELECT * FROM "USER INFO" WHERE email = $1';
 
     try{
-        const selectRes = await client.query(selectQuery, values);
+        const selectRes = await pool.query(selectQuery, values);
         return selectRes
     } catch (error) {
         console.error("error pulling user code", error);
@@ -142,13 +139,12 @@ export async function pullUserCode(email){
 
 }
 
-
 export async function updatePassword(username, hashedPassowrd){
     const values = [hashedPassowrd,username];
     const updateQuery = 'UPDATE public."USER INFO" set password = $1 WHERE username = $2';
 
     try{
-        const UpdateRes = await client.query(updateQuery,values);
+        const UpdateRes = await pool.query(updateQuery,values);
         return UpdateRes.rowCount;
     } catch (error){
         console.error("error updating password:", error);

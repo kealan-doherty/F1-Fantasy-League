@@ -1,5 +1,4 @@
 import crypto from 'crypto';
-import { client } from './public/SQL_functions.js';
 /*
 creating the hased token for password reset this will be finsihed once the rest of the app if back to running properly.
 */

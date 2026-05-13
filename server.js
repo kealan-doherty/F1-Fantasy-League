@@ -106,7 +106,7 @@ app.post('/updateTeam', requireAuth, async (req,res) => {
     const newConstructor = req.body.constructor;
 
     try{
-        await updateConstrcutor(username, newConstructor);
+        await updateConstructor(username, newConstructor);
         await updateDrivers(username, newDriverOne, newDriverTwo);
         res.sendFile('profilePage.html', {root: path.join(__dirname, 'public')});
     } catch (err){
@@ -114,6 +114,7 @@ app.post('/updateTeam', requireAuth, async (req,res) => {
     }
 
 });
+
 app.post('/username', requireAuth, async (req,res) => {
     const data = req.session.user.username;
     console.log(data);
@@ -125,12 +126,11 @@ app.post('/username', requireAuth, async (req,res) => {
 });
 
 app.post('/resetInfo', requireAuth, async (req,res) => {
-    console.log('hi');
+    console.log('reset info endpoint hit');
     // while app isn't deployed reset password will be now via a code entered by the user Once
     // app is deployed I will fully correct to have industy standard reset function 
    
     const username = req.body.username;
-    console.log(username);
     const code = req.body.code;
     const hashedCode = await bcrypt.hash(code,10);
     const userData = await pullTeam(username); 
