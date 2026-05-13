@@ -59,7 +59,7 @@ export async function pullUserData(username){
     const selectQuery = 'SELECT password FROM public."USER INFO" WHERE username = $1';
 
     try{
-        const selectRes = client.query(selectQuery, values);
+        const selectRes = await client.query(selectQuery, values);
         return selectRes;
     }
     catch (error) {

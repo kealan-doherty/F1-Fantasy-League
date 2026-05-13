@@ -37,14 +37,14 @@ app.get('/', (req, res) => {
 
 app.post('/submit', async (req, res) => {
     const data = req.body;
-    username = data.username;
+    const username = data.username;
     if(data.password != data.confirmPassword){
         res.send('<h1> Error Passwords Do not match Please try again</h1>');
     }
 
-    hashedPassowrd = await bcrypt.hash(data.password, 10); 
-    hashedEmail = await bcrypt.hash(data.email, 10);
-    hashedCode = await bcrypt.hash(data.passResetCode,10);
+    const hashedPassowrd = await bcrypt.hash(data.password, 10); 
+    const hashedEmail = await bcrypt.hash(data.email, 10);
+    const hashedCode = await bcrypt.hash(data.passResetCode,10);
 
     createNewUser(username,hashedPassowrd, hashedEmail,hashedCode);
     req.session.user = {username: username};
@@ -59,7 +59,7 @@ app.post('/resetPasswordConfirm', requireAuth, async (req,res) => {
     if(data.password != data.confirmPassword){
         res.send('<h1> ERROR PASSWORDS DO NOT MATCH </h1>');
     }
-    hashedPassowrd = await bcrypt.hash(data.password,10);
+    const hashedPassowrd = await bcrypt.hash(data.password,10);
     await updatePassword(username, hashedPassowrd);
     res.send('<h1> Password successfully changed please return to login screen </h1>');
     
@@ -132,10 +132,10 @@ app.post('/resetInfo', requireAuth, async (req,res) => {
     const username = req.body.username;
     console.log(username);
     const code = req.body.code;
-    hashedCode = await bcrypt.hash(code,10);
+    const hashedCode = await bcrypt.hash(code,10);
     const userData = await pullTeam(username); 
     const pulledCode = userData.rows[0].code;
-    
+
    // try{
      //   if(await bcrypt.compare(data = code, hashedcode = pulledCode) == true){
        // req.session.user = {username: username};
