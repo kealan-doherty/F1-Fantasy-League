@@ -55,7 +55,7 @@ export const validateSignIn = [
 // validates user input for reseting their password.
 export const validateResetInfo = [
     body('email').isEmail().withMessage('Please enter a valid email address'),
-    body('code').notEmpty().withMessage('Reset code cannot be empty')
+    body('code').matches(/^[0-9a-f]{64}$/).withMessage('Invalid reset code format')
 ];
 
 //validates user input for when they are reseting their password.

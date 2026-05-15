@@ -173,7 +173,8 @@ app.post('/resetInfo', validateResetInfo, handleValidationErrors, async (req,res
             return res.send("<h1> Reset code has expired, please request a new one </h1>");
         }
 
-        const isValidCode = crypto.createHash('sha256').update(code).digest('hex') === reset_token;
+        const hashedInput = crypto.createHash('sha256').update(code).digest('hex');
+        const isValidCode = crypto.timingSafeEqual(Buffer.from(hashedInput), Buffer.from(reset_token));
 
         if (isValidCode) {
             await clearResetToken(username);
