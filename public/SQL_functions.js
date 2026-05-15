@@ -96,7 +96,7 @@ export async function updateConstructor(username, newConstructor){
 
 export async function pullTeam(username){
     const values = [username];
-    const selectQuery = 'SELECT first_driver, second_driver, constructor FROM public."USER INFO" WHERE username = $1';
+    const selectQuery = 'SELECT username, first_driver, second_driver, constructor FROM public."USER INFO" WHERE username = $1';
 
     try{
         const selectRes = await pool.query(selectQuery, values);
