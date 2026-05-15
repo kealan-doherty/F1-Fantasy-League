@@ -50,9 +50,7 @@ app.post('/submit', validateNewUser, handleValidationErrors, async (req, res) =>
 app.post('/resetPasswordConfirm', validatePasswordReset, handleValidationErrors, requireAuth, async (req,res) => {
     const data = req.body;
     const username = req.session.user.username;
-    if(data.password != data.confirmPassword){
-        return res.send('<h1> ERROR PASSWORDS DO NOT MATCH </h1>');
-    }
+    
     const hashedPassowrd = await bcrypt.hash(data.password,10);
     await updatePassword(username, hashedPassowrd);
     return res.send('<h1> Password successfully changed please return to login screen </h1>');
@@ -123,11 +121,11 @@ app.post('/username', requireAuth, async (req,res) => {
 });
 
 app.post('/resetInfo', validateResetInfo, handleValidationErrors, async (req,res) => {
-    const username = req.body.username;
+    const email = req.body.email;
     const code = req.body.code;
 
     try {
-        const userData = await pullUserCode(username);
+        const userData = await pullUserCode(email);
         if (!userData || userData === -1 || userData.rows.length === 0) {
             return res.send("<h1> Inncorrect Code please Try Again </h1>");
         }
@@ -136,7 +134,7 @@ app.post('/resetInfo', validateResetInfo, handleValidationErrors, async (req,res
         const isValidCode = await bcrypt.compare(code, pulledCode);
 
         if (isValidCode) {
-            req.session.user = {username: username};
+            req.session.user = {email: userData.rows[0].email};
             req.session.save();
             return res.redirect('/updatePassword');
         }
