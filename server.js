@@ -7,9 +7,11 @@ import express from 'express';
 import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { connectDb, createNewUser, pullUserData, pullTeam, updateConstructor, updateDrivers, updatePts, pullUserCode } from './public/SQL_functions.js';
+import nodemailer from 'nodemailer';
+import { connectDb, createNewUser, pullUserData, pullTeam, updateConstructor, updateDrivers, updatePts, storeResetToken, pullResetToken, clearResetToken } from './public/SQL_functions.js';
 import { updatePassword } from './public/SQL_functions.js';
 import { updateScore, requireAuth, validateNewUser, validateSignIn, handleValidationErrors, validateResetInfo, validatePasswordReset } from './middleware.js';
+import { genPasswordToken } from './generatePasswordToken.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
@@ -28,6 +30,16 @@ app.use(session({
 connectDb();
 app.use(bodyParser.urlencoded({extended: true}));
 
+const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST,
+    port: parseInt(process.env.SMTP_PORT, 10),
+    secure: process.env.SMTP_SECURE === 'true',
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS,
+    },
+});
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname,'public','index.html'));
 });
@@ -38,9 +50,8 @@ app.post('/submit', validateNewUser, handleValidationErrors, async (req, res) =>
     const email = data.email;
     
     const hashedPassowrd = await bcrypt.hash(data.password, 10); 
-    const hashedCode = await bcrypt.hash(data.passResetCode,10);
 
-    await createNewUser(username,hashedPassowrd, email,hashedCode);
+    await createNewUser(username, hashedPassowrd, email);
     req.session.user = {username: username};
     req.session.save();
     return res.sendFile('alterTeam.html', {root: path.join(__dirname, 'public')});
@@ -120,21 +131,53 @@ app.post('/username', requireAuth, async (req,res) => {
     }
 });
 
+app.post('/requestReset', async (req, res) => {
+    const email = req.body.email;
+    const genericResponse = '<h1> If that email address is registered, a reset code has been sent to it </h1>';
+
+    try {
+        const { token, hashedToken } = await genPasswordToken();
+        const expiry = new Date(Date.now() + 15 * 60 * 1000);
+
+        const result = await storeResetToken(email, hashedToken, expiry);
+        if (!result || result === -1 || result === 0) {
+            return res.send(genericResponse);
+        }
+
+        await transporter.sendMail({
+            from: process.env.SMTP_USER,
+            to: email,
+            subject: 'F1 Fantasy League — Password Reset Code',
+            text: `Your one-time password reset code is: ${token}\n\nThis code expires in 15 minutes.`,
+        });
+    } catch (error) {
+        console.error('error sending reset email', error);
+    }
+
+    return res.send(genericResponse);
+});
+
 app.post('/resetInfo', validateResetInfo, handleValidationErrors, async (req,res) => {
     const email = req.body.email;
     const code = req.body.code;
 
     try {
-        const userData = await pullUserCode(email);
+        const userData = await pullResetToken(email);
         if (!userData || userData === -1 || userData.rows.length === 0) {
             return res.send("<h1> Inncorrect Code please Try Again </h1>");
         }
 
-        const pulledCode = userData.rows[0].code;
-        const isValidCode = await bcrypt.compare(code, pulledCode);
+        const { reset_token, token_expiry, username } = userData.rows[0];
+
+        if (!reset_token || new Date() > new Date(token_expiry)) {
+            return res.send("<h1> Reset code has expired, please request a new one </h1>");
+        }
+
+        const isValidCode = crypto.createHash('sha256').update(code).digest('hex') === reset_token;
 
         if (isValidCode) {
-            req.session.user = {email: userData.rows[0].email};
+            await clearResetToken(username);
+            req.session.user = {username: username};
             req.session.save();
             return res.redirect('/updatePassword');
         }

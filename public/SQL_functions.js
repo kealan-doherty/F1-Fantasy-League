@@ -37,10 +37,10 @@ export async function disconnectDB(){
     console.log('disconnected from the Database');
 }
     
-export async function createNewUser(username,password, email,code){
-    const insertQuery = 'INSERT INTO public."USER INFO" (username, password, email, code) VALUES ($1, $2, $3, $4)';
+export async function createNewUser(username, password, email){
+    const insertQuery = 'INSERT INTO public."USER INFO" (username, password, email) VALUES ($1, $2, $3)';
     const intitPts = 'UPDATE public."USER INFO" set points = 0 WHERE username = $1';
-    const values = [username, password, email, code];
+    const values = [username, password, email];
     const user = [username];
 
     try{
@@ -124,18 +124,43 @@ export async function updatePts(driverResults){
    
 }
 
-export async function pullUserCode(email){
+export async function storeResetToken(email, hashedToken, expiry){
+    const values = [hashedToken, expiry, email];
+    const updateQuery = 'UPDATE public."USER INFO" SET reset_token = $1, token_expiry = $2 WHERE email = $3';
+
+    try{
+        const updateRes = await pool.query(updateQuery, values);
+        return updateRes.rowCount;
+    } catch (error) {
+        console.error("error storing reset token", error);
+        return -1;
+    }
+}
+
+export async function pullResetToken(email){
     const values = [email];
-    const selectQuery = 'SELECT code FROM public."USER INFO" WHERE email = $1';
+    const selectQuery = 'SELECT reset_token, token_expiry, username FROM public."USER INFO" WHERE email = $1';
 
     try{
         const selectRes = await pool.query(selectQuery, values);
-        return selectRes
+        return selectRes;
     } catch (error) {
-        console.error("error pulling user code", error);
+        console.error("error pulling reset token", error);
         return -1;
     }
+}
 
+export async function clearResetToken(username){
+    const values = [username];
+    const updateQuery = 'UPDATE public."USER INFO" SET reset_token = NULL, token_expiry = NULL WHERE username = $1';
+
+    try{
+        const updateRes = await pool.query(updateQuery, values);
+        return updateRes.rowCount;
+    } catch (error) {
+        console.error("error clearing reset token", error);
+        return -1;
+    }
 }
 
 export async function updatePassword(username, hashedPassowrd){
