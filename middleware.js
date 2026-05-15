@@ -38,7 +38,6 @@ export const validateNewUser = [
     body('username').isLength({min: 3}).withMessage('Username must be at least 3 characters long'),
     body('email').isEmail().withMessage('Please enter a valid email address'),
     body('password').isLength({min: 8}).withMessage('Password must be at least 8 characters long'),
-    body('passResetCode').isLength({min: 10}).withMessage('Password Reset code must be atleast 10 characters long'),
     body('confirmPassword').custom((value, {req}) => {
         if(value !== req.body.password){
             throw new Error('Passwords do not match');
@@ -55,8 +54,8 @@ export const validateSignIn = [
 
 // validates user input for reseting their password.
 export const validateResetInfo = [
-    body('username').isLength({min: 3}).withMessage('Usernames must be atleast 3 characters long '),
-    body('code').isLength({min:10}).withMessage('Password Reset code must be at least 10 characters long')
+    body('email').isEmail().withMessage('Please enter a valid email address'),
+    body('code').matches(/^[0-9a-f]{64}$/).withMessage('Invalid reset code format')
 ];
 
 //validates user input for when they are reseting their password.
