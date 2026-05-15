@@ -126,7 +126,7 @@ export async function updatePts(driverResults){
 
 export async function pullUserCode(email){
     const values = [email];
-    const selectQuery = 'SELECT * FROM public."USER INFO" WHERE email = $1';
+    const selectQuery = 'SELECT code FROM public."USER INFO" WHERE email = $1';
 
     try{
         const selectRes = await pool.query(selectQuery, values);

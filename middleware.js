@@ -58,3 +58,14 @@ export const validateResetInfo = [
     body('username').isLength({min: 3}).withMessage('Usernames must be atleast 3 characters long '),
     body('code').isLength({min:10}).withMessage('Password Reset code must be at least 10 characters long')
 ];
+
+//validates user input for when they are reseting their password.
+export const validatePasswordReset = [
+    body('password').isLength({min: 8}).withMessage('Password must be at least 8 characters long'),
+    body('confirmPassword').custom((value, {req}) => {
+        if(value !== req.body.password){
+            throw new Error('Passwords do not match');
+        }
+        return true;
+    })
+];  

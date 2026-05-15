@@ -7,9 +7,9 @@ import express from 'express';
 import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { connectDb, createNewUser, pullUserData, pullTeam, updateConstructor, updateDrivers, updatePts } from './public/SQL_functions.js';
+import { connectDb, createNewUser, pullUserData, pullTeam, updateConstructor, updateDrivers, updatePts, pullUserCode } from './public/SQL_functions.js';
 import { updatePassword } from './public/SQL_functions.js';
-import { updateScore, requireAuth, validateNewUser, validateSignIn, handleValidationErrors, validateResetInfo } from './middleware.js';
+import { updateScore, requireAuth, validateNewUser, validateSignIn, handleValidationErrors, validateResetInfo, validatePasswordReset } from './middleware.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
@@ -47,7 +47,7 @@ app.post('/submit', validateNewUser, handleValidationErrors, async (req, res) =>
     
 });
 
-app.post('/resetPasswordConfirm', requireAuth, async (req,res) => {
+app.post('/resetPasswordConfirm', validatePasswordReset, handleValidationErrors, requireAuth, async (req,res) => {
     const data = req.body;
     const username = req.session.user.username;
     if(data.password != data.confirmPassword){
@@ -126,12 +126,8 @@ app.post('/resetInfo', validateResetInfo, handleValidationErrors, async (req,res
     const username = req.body.username;
     const code = req.body.code;
 
-    if (!username || !code) {
-        return res.status(400).send('<h1> Username and code are required </h1>');
-    }
-
     try {
-        const userData = await pullTeam(username);
+        const userData = await pullUserCode(username);
         if (!userData || userData === -1 || userData.rows.length === 0) {
             return res.send("<h1> Inncorrect Code please Try Again </h1>");
         }
