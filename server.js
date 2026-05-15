@@ -9,8 +9,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { connectDb, createNewUser, pullUserData, pullTeam, updateConstructor, updateDrivers, updatePts } from './public/SQL_functions.js';
 import { updatePassword } from './public/SQL_functions.js';
-import { updateScore, requireAuth } from './middleware.js';
-
+import { updateScore, requireAuth, validateNewUser, validateSignIn, handleValidationErrors, validateResetInfo } from './middleware.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
@@ -33,14 +32,11 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname,'public','index.html'));
 });
 
-app.post('/submit', async (req, res) => {
+app.post('/submit', validateNewUser, handleValidationErrors, async (req, res) => {
     const data = req.body;
     const username = data.username;
     const email = data.email;
-    if(data.password != data.confirmPassword){
-        return res.send('<h1> Error Passwords Do not match Please try again</h1>');
-    }
-
+    
     const hashedPassowrd = await bcrypt.hash(data.password, 10); 
     const hashedCode = await bcrypt.hash(data.passResetCode,10);
 
@@ -61,9 +57,9 @@ app.post('/resetPasswordConfirm', requireAuth, async (req,res) => {
     await updatePassword(username, hashedPassowrd);
     return res.send('<h1> Password successfully changed please return to login screen </h1>');
     
-})
+});
 
-app.post('/sign-in', async (req, res) => {
+app.post('/sign-in', validateSignIn, handleValidationErrors, async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
     
@@ -126,7 +122,7 @@ app.post('/username', requireAuth, async (req,res) => {
     }
 });
 
-app.post('/resetInfo', async (req,res) => {
+app.post('/resetInfo', validateResetInfo, handleValidationErrors, async (req,res) => {
     const username = req.body.username;
     const code = req.body.code;
 
