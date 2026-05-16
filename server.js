@@ -121,9 +121,8 @@ app.post('/updateTeam', requireAuth, async (req,res) => {
 
 });
 
-app.post('/username', requireAuth, async (req,res) => {
+app.get('/username', requireAuth, async (req,res) => {
     const data = req.session.user.username;
-    console.log(data);
     try{
         res.json(data);
     } catch (error){

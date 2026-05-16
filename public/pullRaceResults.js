@@ -5,16 +5,16 @@ export function pullDriverResults(jsonContent){
         for(let i = 0; i <= 9; i++ ){
             switch(jsonContent[i].driver_number){
                 case 1:
-                    driverResults["Max_Verstappen"] = jsonContent[i].position;
+                    driverResults["Lando_Norris"] = jsonContent[i].position;
                     continue;
-                case 22:
-                    driverResults["Yuki_Tsunoda"] = jsonContent[i].position;
+                case 3:
+                    driverResults["Max_Verstappen"] = jsonContent[i].position;
                     continue;
                 case 81:
                     driverResults["Oscar_Piastri"] = jsonContent[i].position;
                     continue;
-                case 4:
-                    driverResults["Lando_Norris"] = jsonContent[i].position;
+                case 77:
+                    driverResults["Valtteri_Bottas"] = jsonContent[i].position;
                     continue;
                 case 16:
                     driverResults["Charles_Leclerc"] = jsonContent[i].position;
@@ -52,8 +52,14 @@ export function pullDriverResults(jsonContent){
                 case 5:
                     driverResults["Gabriel_Bortoleto"] = jsonContent[i].position;
                     continue;
+                case 11:
+                    driverResults["Sergio_Perez"] = jsonContent[i].position;
+                    continue;
                 case 30:
                     driverResults["Liam_Lawson"] = jsonContent[i].position;
+                    continue;
+                case 41:
+                    driverResults["Arvid_Lindblad"] = jsonContent[i].position;
                     continue;
                 case 6:
                     driverResults["Isack_Hadjar"] = jsonContent[i].position;

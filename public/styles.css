@@ -179,6 +179,16 @@ footer {
     color: black;
 }
 
+.audi{
+    background-color: #F50537;
+    color: white;
+}
+
+.cadillac{
+    background-color: #1F2D5A;
+    color: white;
+}
+
 .haas{
     background-color: #EB0A1E ;
     color: white;
