@@ -4,25 +4,29 @@
   "type": "module",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
     "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
     "test:unit": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --testMatch \"**/testing/unitTest.js\"",
-    "test:integration": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --testMatch \"**/testing/integrationTest.js\""
+    "test:integration": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --testMatch \"**/testing/integrationTest.js\" --forceExit"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.5.2",
     "express-session": "^1.18.2",
     "express-validator": "^7.3.2",
     "gsap": "^3.13.0",
     "node-cron": "^4.2.1",
-    "nodemailer": "^7.0.13",
+    "nodemailer": "^8.0.7",
     "pg": "^8.16.3",
     "postprocessing": "^6.37.7",
     "three": "^0.179.1"
   },
   "devDependencies": {
-    "jest": "^30.4.2"
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2"
   }
 }

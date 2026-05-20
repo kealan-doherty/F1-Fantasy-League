@@ -12,22 +12,27 @@ import { connectDb, createNewUser, pullUserData, pullTeam, updateConstructor, up
 import { updatePassword } from './public/SQL_functions.js';
 import { updateScore, requireAuth, validateNewUser, validateSignIn, handleValidationErrors, validateResetInfo, validatePasswordReset } from './middleware.js';
 import { genPasswordToken } from './generatePasswordToken.js';
+import { globalLimiter, authLimiter } from './rateLimiting/rateLimiter.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
+export default app;
 
 const secret = process.env.SESSION_SECRET;
 
+app.set('trust proxy', 1);
+app.use(globalLimiter);
 app.use(express.json());
 app.use(express.static('public'));
 app.use(session({
     secret: secret,
     resave: false,
     saveUninitialized: false,
-    cookie: {secure: true, httpOnly: true, maxAge: 3600000}
+    cookie: {secure: process.env.NODE_ENV !== 'test', httpOnly: true, maxAge: 3600000}
 }));
 
 connectDb();
+
 app.use(bodyParser.urlencoded({extended: true}));
 
 const transporter = nodemailer.createTransport({
@@ -68,7 +73,7 @@ app.post('/resetPasswordConfirm', validatePasswordReset, handleValidationErrors,
     
 });
 
-app.post('/sign-in', validateSignIn, handleValidationErrors, async (req, res) => {
+app.post('/sign-in', authLimiter, validateSignIn, handleValidationErrors, async (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
     
@@ -130,7 +135,7 @@ app.get('/username', requireAuth, async (req,res) => {
     }
 });
 
-app.post('/requestReset', async (req, res) => {
+app.post('/requestReset', authLimiter, async (req, res) => {
     const email = req.body.email;
     const genericResponse = '<h1> If that email address is registered, a reset code has been sent to it </h1>';
 
@@ -156,7 +161,7 @@ app.post('/requestReset', async (req, res) => {
     return res.send(genericResponse);
 });
 
-app.post('/resetInfo', validateResetInfo, handleValidationErrors, async (req,res) => {
+app.post('/resetInfo', authLimiter, validateResetInfo, handleValidationErrors, async (req,res) => {
     const email = req.body.email;
     const code = req.body.code;
 
@@ -189,13 +194,17 @@ app.post('/resetInfo', validateResetInfo, handleValidationErrors, async (req,res
     }
 });
 
-cron.schedule('0 18 * * 0', () => {
-    updateScore();
-})
+if (process.env.NODE_ENV !== 'test') {
+    cron.schedule('0 18 * * 0', () => {
+        updateScore();
+    });
+}
 
-app.listen(3000, () => {
-    console.log("server is up and running");
-});
+if (process.env.NODE_ENV !== 'test'){
+    app.listen(3000, () => {
+        console.log("server is up and running");
+    });
+}
 
 
 
