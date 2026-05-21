@@ -8,11 +8,15 @@
     "dev": "node --watch server.js",
     "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
     "test:unit": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --testMatch \"**/testing/unitTest.js\"",
-    "test:integration": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --testMatch \"**/testing/integrationTest.js\" --forceExit"
+    "test:integration": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --testMatch \"**/testing/integrationTest.js\" --forceExit",
+    "migrate:create": "node-pg-migrate create",
+    "migrate:up": "node-pg-migrate up --database-url-var DB_URL",
+    "migrate:down": "node-pg-migrate down --database-url-var DB_URL"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.0",
+    "connect-pg-simple": "^10.0.0",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "express-rate-limit": "^8.5.2",
@@ -28,6 +32,7 @@
   "devDependencies": {
     "eslint": "^8.10.0",
     "jest": "^30.4.2",
+    "node-pg-migrate": "^8.0.4",
     "supertest": "^7.2.2"
   }
 }

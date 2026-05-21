@@ -5,10 +5,11 @@ import cron from 'node-cron';
 import bodyParser from 'body-parser';
 import express from 'express';
 import session from 'express-session';
+import connectPgSimple from 'connect-pg-simple';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import nodemailer from 'nodemailer';
-import { connectDb, createNewUser, pullUserData, pullTeam, updateConstructor, updateDrivers, updatePts, storeResetToken, pullResetToken, clearResetToken } from './public/SQL_functions.js';
+import { connectDb, createNewUser, pullUserData, pullTeam, updateConstructor, updateDrivers, updatePts, storeResetToken, pullResetToken, clearResetToken, pool } from './public/SQL_functions.js';
 import { updatePassword } from './public/SQL_functions.js';
 import { updateScore, requireAuth, validateNewUser, validateSignIn, handleValidationErrors, validateResetInfo, validatePasswordReset } from './middleware.js';
 import { genPasswordToken } from './generatePasswordToken.js';
@@ -18,6 +19,8 @@ const __dirname = path.dirname(__filename);
 const app = express();
 export default app;
 
+const PgSession = connectPgSimple(session);
+
 const secret = process.env.SESSION_SECRET;
 
 app.set('trust proxy', 1);
@@ -25,6 +28,10 @@ app.use(globalLimiter);
 app.use(express.json());
 app.use(express.static('public'));
 app.use(session({
+    store: process.env.NODE_ENV === 'test' ? undefined : new PgSession({
+        pool: pool,
+        tableName: 'user_sessions',
+    }),
     secret: secret,
     resave: false,
     saveUninitialized: false,
@@ -63,7 +70,7 @@ app.post('/submit', validateNewUser, handleValidationErrors, async (req, res) =>
     
 });
 
-app.post('/resetPasswordConfirm', validatePasswordReset, handleValidationErrors, requireAuth, async (req,res) => {
+app.post('/resetPasswordConfirm', requireAuth, validatePasswordReset, handleValidationErrors, async (req,res) => {
     const data = req.body;
     const username = req.session.user.username;
     
@@ -79,7 +86,10 @@ app.post('/sign-in', authLimiter, validateSignIn, handleValidationErrors, async 
     
     const userData = await pullUserData(username);
     if (!userData || userData === -1 || userData.rows.length === 0) {
-        return res.send("<h1> Inncorrect Username or Password please Try Again </h1>");
+        return res.status(401).json({
+            error: 'Incorrect username or password',
+            message: 'Incorrect username or password, please try again'
+        });
     }
     const pulledPassword = userData.rows[0].password;
     
@@ -88,7 +98,10 @@ app.post('/sign-in', authLimiter, validateSignIn, handleValidationErrors, async 
          req.session.save();
          return res.redirect('/profilePage');
     } else {
-         return res.send("<h1> Inncorrect Username or Password please Try Again </h1>");
+         return res.status(401).json({
+             error: 'Incorrect username or password',
+             message: 'Incorrect username or password, please try again'
+         });
     }
 });
 
@@ -168,13 +181,19 @@ app.post('/resetInfo', authLimiter, validateResetInfo, handleValidationErrors, a
     try {
         const userData = await pullResetToken(email);
         if (!userData || userData === -1 || userData.rows.length === 0) {
-            return res.send("<h1> Inncorrect Code please Try Again </h1>");
+            return res.status(400).json({
+                error: 'Invalid reset code',
+                message: 'The reset code is incorrect. Please try again.'
+            });
         }
 
         const { reset_token, token_expiry, username } = userData.rows[0];
 
         if (!reset_token || new Date() > new Date(token_expiry)) {
-            return res.send("<h1> Reset code has expired, please request a new one </h1>");
+            return res.status(400).json({
+                error: 'Invalid or expired reset code',
+                message: 'The reset code is invalid or has expired. Please request a new one.'
+            });
         }
 
         const hashedInput = crypto.createHash('sha256').update(code).digest('hex');
@@ -187,10 +206,16 @@ app.post('/resetInfo', authLimiter, validateResetInfo, handleValidationErrors, a
             return res.redirect('/updatePassword');
         }
 
-        return res.send("<h1> Inncorrect Code please Try Again </h1>");
+        return res.status(400).json({
+            error: 'Invalid reset code',
+            message: 'The reset code is incorrect. Please try again.'
+        });
     } catch(error) {
         console.error('error confirming code', error);
-        return res.status(500).send('<h1> Error confirming reset code </h1>');
+        return res.status(500).json({
+            error: 'Error confirming reset code',
+            message: 'An error occurred while confirming the reset code. Please try again later.'
+        });
     }
 });
 
