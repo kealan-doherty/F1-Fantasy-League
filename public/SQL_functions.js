@@ -75,7 +75,7 @@ export async function updateConstructor(username, newConstructor){
     try{
         const updateRes = await pool.query(updateQuery,values);
         return updateRes.rowCount;
-    } catch (error){ER_INFO
+    } catch (error){
         console.error("error updating the constructor", error);
         return -1;
     }
