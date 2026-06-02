@@ -5,7 +5,9 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --watch server.js",
+    "dev": "npm --prefix client run dev",
+    "dev:client": "npm --prefix client run dev",
+    "dev:server": "node --watch server.js",
     "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js",
     "test:unit": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --testMatch \"**/testing/unitTest.js\"",
     "test:integration": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --testMatch \"**/testing/integrationTest.js\" --forceExit",
