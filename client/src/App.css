@@ -127,6 +127,22 @@
   box-shadow: 0 10px 18px rgba(255, 186, 8, 0.35);
 }
 
+.form-errors {
+  padding: 0.7rem 0.8rem;
+  border-radius: 0.6rem;
+  border: 1px solid #ef4444;
+  background: #fef2f2;
+  color: #991b1b;
+}
+
+.form-errors p {
+  margin: 0;
+}
+
+.form-errors p + p {
+  margin-top: 0.35rem;
+}
+
 .subhead {
   margin: 1.2rem 0 0;
   max-width: 56ch;

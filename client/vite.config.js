@@ -8,7 +8,20 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'http://localhost:3000',
-        changeOrigin: true,}
-      }
+        changeOrigin: true,
+      },
+      '/submit': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/sign-in': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+      '/updateTeam': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+      },
+    },
   }
 })

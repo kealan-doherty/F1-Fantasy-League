@@ -57,16 +57,36 @@ app.get('/', (req, res) => {
 });
 
 app.post('/submit', validateNewUser, handleValidationErrors, async (req, res) => {
+    if (!req.is('application/json')) {
+        return res.status(415).json({
+            error: 'Unsupported media type',
+            message: 'Use application/json for this endpoint.',
+        });
+    }
+
     const data = req.body;
     const username = data.username;
     const email = data.email;
-    
-    const hashedPassowrd = await bcrypt.hash(data.password, 10); 
 
-    await createNewUser(username, hashedPassowrd, email);
-    req.session.user = {username: username};
-    req.session.save();
-    return res.sendFile('alterTeam.html', {root: path.join(__dirname, 'public')});
+    try {
+        const hashedPassword = await bcrypt.hash(data.password, 10);
+        await createNewUser(username, hashedPassword, email);
+        req.session.user = { username: username };
+        req.session.save();
+
+        return res.status(201).json({
+            message: 'Account created successfully',
+            username: username,
+        });
+
+    } catch (error) {
+        console.error('error creating user account', error);
+
+        return res.status(500).json({
+            error: 'Account creation failed',
+            message: 'Unable to create account at this time. Please try again later.',
+        });
+    }
     
 });
 
@@ -76,7 +96,9 @@ app.post('/resetPasswordConfirm', requireAuth, validatePasswordReset, handleVali
     
     const hashedPassowrd = await bcrypt.hash(data.password,10);
     await updatePassword(username, hashedPassowrd);
-    return res.send('<h1> Password successfully changed please return to login screen </h1>');
+    return res.status(200).json({
+        message: 'Password updated successfully',
+    });
     
 });
 
@@ -96,7 +118,10 @@ app.post('/sign-in', authLimiter, validateSignIn, handleValidationErrors, async 
     if (await bcrypt.compare(password, pulledPassword)) {
          req.session.user = {username: username};
          req.session.save();
-         return res.redirect('/profilePage');
+         return res.status(200).json({
+             message: 'Login successful',
+             username: username,
+         });
     } else {
          return res.status(401).json({
              error: 'Incorrect username or password',
@@ -117,13 +142,20 @@ app.get('/userData', requireAuth, async (req,res) => {
     try{
         const username = req.session.user.username;
         const data = await pullTeam(username);
-        res.json(data);
+        res.status(200).json(data);
     }catch (error){
         console.error('error sending teams data', error);
     }
 });
 
 app.post('/updateTeam', requireAuth, async (req,res) => {
+    if (!req.is('application/json')) {
+        return res.status(415).json({
+            error: 'Unsupported media type',
+            message: 'Use application/json for this endpoint.',
+        });
+    }
+
     const username = req.session.user.username;
     const newDriverOne = req.body.first_driver;
     const newDriverTwo = req.body.second_driver;
@@ -132,9 +164,18 @@ app.post('/updateTeam', requireAuth, async (req,res) => {
     try{
         await updateConstructor(username, newConstructor);
         await updateDrivers(username, newDriverOne, newDriverTwo);
-        res.sendFile('profilePage.html', {root: path.join(__dirname, 'public')});
+
+        return res.status(200).json({
+            message: 'Team updated successfully',
+        });
+        
     } catch (err){
         console.error("error occured in updating team", err.message);
+
+        return res.status(500).json({
+            error: 'Team update failed',
+            message: 'Unable to update team at this time. Please try again later.',
+        });
     }
 
 });
