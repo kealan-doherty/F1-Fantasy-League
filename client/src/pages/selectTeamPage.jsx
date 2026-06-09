@@ -31,18 +31,26 @@ function selectTeamPage() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Accept': 'application/json',
                 },
                 credentials: 'include',
                 body: JSON.stringify(formData),
             });
 
-            const result = await response.json();
+            const responseType = response.headers.get('content-type') || '';
+            const result = responseType.includes('application/json') ? await response.json() : null;
+
+            if (response.status === 401) {
+                setErrors(['Your session expired. Please log in again.']);
+                navigate('/logIn');
+                return;
+            }
 
             if (!response.ok) {
-                if(Array.isArray(result.errors)) {
+                if(result && Array.isArray(result.errors)) {
                     setErrors(result.errors);
                 } else {
-                    setErrors([result.message || 'unable to update team']);
+                    setErrors([result?.message || `Unable to update team (status ${response.status}).`]);
                 }
                 return;
             }
@@ -50,7 +58,7 @@ function selectTeamPage() {
             navigate('/userProfile');
         
     } catch (error) {
-        setErrors(['Unable to connect to server. Ensure backend is running']);
+        setErrors(['Unable to connect to server. Ensure frontend proxy and backend are running.']);
     } finally {
         setIsSubmitting(false);
     }

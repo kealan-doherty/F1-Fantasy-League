@@ -9,6 +9,18 @@ export function requireAuth(req, res, next){
         return next();
     }
 
+    const acceptsHeader = req.get('accept') || '';
+    const contentTypeHeader = req.get('content-type') || '';
+    const isApiRequest = req.originalUrl === '/userData' || req.originalUrl === '/updateTeam';
+    const expectsJson = acceptsHeader.includes('application/json') || contentTypeHeader.includes('application/json');
+
+    if (isApiRequest || expectsJson) {
+        return res.status(401).json({
+            error: 'Unauthorized',
+            message: 'Please sign in again to continue.',
+        });
+    }
+
     return res.redirect('/');
 }
 

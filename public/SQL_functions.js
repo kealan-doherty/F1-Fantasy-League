@@ -14,8 +14,6 @@ export async function connectDb(){
         console.error("error connecting to the database", err);
         return -1;
     }
-
-
 }
 
 export async function disconnectDB(){
@@ -84,7 +82,7 @@ export async function updateConstructor(username, newConstructor){
 
 export async function pullTeam(username){
     const values = [username];
-    const selectQuery = 'SELECT username, first_driver, second_driver, constructor FROM public.user_info WHERE username = $1';
+    const selectQuery = 'SELECT username, first_driver, second_driver, constructor, points FROM public.user_info WHERE username = $1';
 
     try{
         const selectRes = await pool.query(selectQuery, values);

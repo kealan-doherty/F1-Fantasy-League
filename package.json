@@ -12,8 +12,8 @@
     "test:unit": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --testMatch \"**/testing/unitTest.js\"",
     "test:integration": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --testMatch \"**/testing/integrationTest.js\" --forceExit",
     "migrate:create": "node-pg-migrate create",
-    "migrate:up": "node-pg-migrate up --database-url-var DB_URL",
-    "migrate:down": "node-pg-migrate down --database-url-var DB_URL"
+    "migrate:up": "node-pg-migrate up --database-url-var DB_MIG_URL",
+    "migrate:down": "node-pg-migrate down --database-url-var DB_MIG_URL"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",
