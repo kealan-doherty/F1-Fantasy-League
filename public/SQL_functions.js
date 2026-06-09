@@ -17,7 +17,7 @@ export async function connectDb(){
 }
 
 export async function disconnectDB(){
-    try{
+    try {
         await pool.end();
     } catch(error){
         console.error('Failed to disconnect from the Database', error);
@@ -30,7 +30,7 @@ export async function createNewUser(username, password, email){
     const insertQuery = 'INSERT INTO public.user_info (username, password, email, points) VALUES ($1, $2, $3, 0)';
     const values = [username, password, email];
 
-    try{
+    try {
         const insertRes = await pool.query(insertQuery, values);
         return insertRes.rowCount;
     } catch (error){
@@ -43,7 +43,7 @@ export async function pullUserData(username){
     const values = [username];
     const selectQuery = 'SELECT password FROM public.user_info WHERE username = $1';
 
-    try{
+    try {
         const selectRes = await pool.query(selectQuery, values);
         return selectRes;
     }
@@ -70,7 +70,7 @@ export async function updateConstructor(username, newConstructor){
     const values = [newConstructor, username];
     const updateQuery = 'UPDATE public.user_info SET constructor = $1 WHERE username = $2';
 
-    try{
+    try {
         const updateRes = await pool.query(updateQuery,values);
         return updateRes.rowCount;
     } catch (error){
@@ -84,7 +84,7 @@ export async function pullTeam(username){
     const values = [username];
     const selectQuery = 'SELECT username, first_driver, second_driver, constructor, points FROM public.user_info WHERE username = $1';
 
-    try{
+    try { 
         const selectRes = await pool.query(selectQuery, values);
         return selectRes;
     } catch (error) {
@@ -97,7 +97,7 @@ export async function updatePts(driverResults){
     // ensure this function is working correctly!!!
     const updateQueryOne = 'UPDATE public.user_info set points = points + $2 WHERE first_driver = $1';
     const updateQueryTwo = 'UPDATE public.user_info set points = points + $2 WHERE second_driver = $1';
-        try{
+        try {
             for (const key in driverResults){
                 const values = [key,driverResults[key]];
                 const updatePtsOne = await pool.query(updateQueryOne,values);
@@ -114,7 +114,7 @@ export async function storeResetToken(email, hashedToken, expiry){
     const values = [hashedToken, expiry, email];
     const updateQuery = 'UPDATE public.user_info SET reset_token = $1, token_expiry = $2 WHERE email = $3';
 
-    try{
+    try {
         const updateRes = await pool.query(updateQuery, values);
         return updateRes.rowCount;
     } catch (error) {
@@ -127,7 +127,7 @@ export async function pullResetToken(email){
     const values = [email];
     const selectQuery = 'SELECT reset_token, token_expiry, username FROM public.user_info WHERE email = $1';
 
-    try{
+    try {
         const selectRes = await pool.query(selectQuery, values);
         return selectRes;
     } catch (error) {
@@ -140,7 +140,7 @@ export async function clearResetToken(username){
     const values = [username];
     const updateQuery = 'UPDATE public.user_info SET reset_token = NULL, token_expiry = NULL WHERE username = $1';
 
-    try{
+    try {
         const updateRes = await pool.query(updateQuery, values);
         return updateRes.rowCount;
     } catch (error) {
@@ -153,11 +153,23 @@ export async function updatePassword(username, hashedPassowrd){
     const values = [hashedPassowrd,username];
     const updateQuery = 'UPDATE public.user_info set password = $1 WHERE username = $2';
 
-    try{
+    try {
         const UpdateRes = await pool.query(updateQuery,values);
         return UpdateRes.rowCount;
-    } catch (error){
+    } catch (error) {
         console.error("error updating password:", error);
+        return -1;
+    }
+}
+
+export async function pullLeaderBoard() {
+    const selectQuery = 'SELECT username, points FROM public.user_info ORDER BY points DESC, username ASC LIMIT 5';
+
+    try {
+        const selectRes = await pool.query(selectQuery);
+        return selectRes.rows;
+    } catch (error) {
+        console.error("error pulling leaderboard", error);
         return -1;
     }
 }

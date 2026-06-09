@@ -9,11 +9,12 @@ import connectPgSimple from 'connect-pg-simple';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import nodemailer from 'nodemailer';
-import { connectDb, createNewUser, pullUserData, pullTeam, updateConstructor, updateDrivers, updatePts, storeResetToken, pullResetToken, clearResetToken, pool } from './public/SQL_functions.js';
+import { connectDb, createNewUser, pullUserData, pullTeam, updateConstructor, updateDrivers, updatePts, storeResetToken, pullResetToken, clearResetToken, pool, pullLeaderBoard } from './public/SQL_functions.js';
 import { updatePassword } from './public/SQL_functions.js';
 import { updateScore, requireAuth, validateNewUser, validateSignIn, handleValidationErrors, validateResetInfo, validatePasswordReset } from './middleware.js';
 import { genPasswordToken } from './generatePasswordToken.js';
 import { globalLimiter, authLimiter } from './rateLimiting/rateLimiter.js';
+import { connectCache, redisClient } from './caching/caching.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const app = express();
@@ -256,6 +257,51 @@ app.post('/resetInfo', authLimiter, validateResetInfo, handleValidationErrors, a
         return res.status(500).json({
             error: 'Error confirming reset code',
             message: 'An error occurred while confirming the reset code. Please try again later.'
+        });
+    }
+});
+
+app.get('/leaderboard/top5', requireAuth, async (req,res) => {
+
+    try {
+        const key = 'leaderboard:top5';
+        const ttlSeconds = 120;
+
+        await connectCache();
+        const cached = await redisClient.get(key);
+
+        if (cached) {
+            return res.status(200).json({
+                leaders: JSON.parse(cached),
+                meta: {
+                    limit: 5,
+                    source: 'cache',
+                },
+            });
+        }
+
+        const leaders = await pullLeaderBoard();
+        if (leaders === -1) {
+            return res.status(500).json({
+                error: 'Leaderboard fetch failed',
+                message: 'Unable to fetch leaderboard at this time.',
+            });
+        }
+
+        await redisClient.setEx(key, ttlSeconds, JSON.stringify(leaders));
+
+        return res.status(200).json({
+            leaders: leaders,
+            meta: {
+                limit: 5,
+                source: 'db',
+            },
+        });
+    } catch (error) {
+        console.error('error pulling leaderboard data', error);
+        return res.status(500).json({
+            error: 'Leaderboard fetch failed',
+            message: 'Unable to fetch leaderboard at this time.',
         });
     }
 });
