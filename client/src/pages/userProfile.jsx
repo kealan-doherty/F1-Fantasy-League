@@ -88,58 +88,60 @@ function UserProfile() {
 
             <h1 className="newUserHeadline">Welcome{profileData?.username ? `, ${profileData.username}` : '!'}</h1>
 
-            <section className="panel" aria-live="polite">
-                <h2 className="section-title">Your Team</h2>
+            <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start', width: '100%' }}> 
+                <section className="panel" aria-live="polite">
+                    <h2 className="section-title">Your Team</h2>
 
-                {isLoading && <p>Loading profile...</p>}
+                    {isLoading && <p>Loading profile...</p>}
 
-                {errors.length > 0 && (
-                    <div className="form-errors" role="alert" aria-live="polite">
-                        {errors.map((error) => (
-                            <p key={error}>{error}</p>
-                        ))}
-                    </div>
-                )}
+                    {errors.length > 0 && (
+                        <div className="form-errors" role="alert" aria-live="polite">
+                            {errors.map((error) => (
+                                <p key={error}>{error}</p>
+                            ))}
+                        </div>
+                    )}
 
-                {!isLoading && errors.length === 0 && (
-                    <div className="points-grid">
-                        {profileFields.map((field) => (
-                            <article className="card" key={field.label}>
-                                <p className="card-label">{field.label}</p>
-                                <p className="card-value">{field.value ?? 'Not set yet'}</p>
-                            </article>
-                        ))}
-                    </div>
-                )}
-            </section>
+                    {!isLoading && errors.length === 0 && (
+                        <div className="points-grid">
+                            {profileFields.map((field) => (
+                                <article className="card" key={field.label}>
+                                    <p className="card-label">{field.label}</p>
+                                    <p className="card-value">{field.value ?? 'Not set yet'}</p>
+                                </article>
+                            ))}
+                        </div>
+                    )}
+                </section>
 
-            <section className="panel" aria-live="polite">
-                <h2 className="section-title">Top 5 Leaderboard</h2>
+                <section className="panel" aria-live="polite">
+                    <h2 className="section-title">Top 5 Leaderboard</h2>
 
-                {isLoading && <p>Loading leaderboard...</p>}
+                    {isLoading && <p>Loading leaderboard...</p>}
 
-                {!isLoading && leaderboardError && (
-                    <div className="form-errors" role="alert" aria-live="polite">
-                        <p>{leaderboardError}</p>
-                    </div>
-                )}
+                    {!isLoading && leaderboardError && (
+                        <div className="form-errors" role="alert" aria-live="polite">
+                            <p>{leaderboardError}</p>
+                        </div>
+                    )}
 
-                {!isLoading && !leaderboardError && leaders.length === 0 && (
-                    <p>No leaderboard data available yet.</p>
-                )}
+                    {!isLoading && !leaderboardError && leaders.length === 0 && (
+                        <p>No leaderboard data available yet.</p>
+                    )}
 
-                {!isLoading && !leaderboardError && leaders.length > 0 && (
-                    <div className="points-grid">
-                        {leaders.map((leader, index) => (
-                            <article className="card" key={`${leader.username}-${index}`}>
-                                <p className="card-label">#{index + 1}</p>
-                                <p className="card-value">{leader.username}</p>
-                                <p className="card-footnote">{leader.points} pts</p>
-                            </article>
-                        ))}
-                    </div>
-                )}
-            </section>
+                    {!isLoading && !leaderboardError && leaders.length > 0 && (
+                        <div className="points-grid">
+                            {leaders.map((leader, index) => (
+                                <article className="card" key={`${leader.username}-${index}`}>
+                                    <p className="card-label">#{index + 1}</p>
+                                    <p className="card-value">{leader.username}</p>
+                                    <p className="card-footnote">{leader.points} pts</p>
+                                </article>
+                            ))}
+                        </div>
+                    )}
+                </section>
+            </div>
 
             <div className="hero-actions">
                 <Link className="button button-primary" to="/selectTeam">Alter line-up</Link>
