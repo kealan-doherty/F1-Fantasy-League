@@ -12,6 +12,10 @@
   padding: 3rem 0 4rem;
 }
 
+.user-profile-page {
+  width: min(1120px, 94vw);
+}
+
 .update-user-team {
   position: relative;
   width: min(620px, 92vw);
@@ -179,9 +183,11 @@
   align-items: center;
   justify-content: center;
   padding: 0.75rem 1.15rem;
+  border: none;
   border-radius: 0.75rem;
   text-decoration: none;
   font-weight: 600;
+  cursor: pointer;
   transition: transform 180ms ease, box-shadow 180ms ease;
 }
 
@@ -212,6 +218,20 @@
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.65);
   box-shadow: 0 18px 38px rgba(21, 28, 39, 0.08);
+}
+
+.profile-sections {
+  width: 100%;
+  display: flex;
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.profile-sections .panel {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: var(--section-weight, 1) 1 14rem;
 }
 
 .section-title {
@@ -254,6 +274,47 @@
   margin: 0.35rem 0 0;
   color: #64748b;
   font-size: 0.88rem;
+}
+
+.leaderboard-grid {
+  gap: 0.45rem;
+}
+
+.race-results-grid {
+  gap: 0.45rem;
+}
+
+.race-results-card {
+  padding: 1.5rem 0.75rem;
+}
+
+.race-results-rank {
+  font-size: 0.8rem;
+}
+
+.race-results-name {
+  margin-top: 0.2rem;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.leaderboard-card {
+  padding: 0.83rem 0.7rem;
+}
+
+.leaderboard-rank {
+  font-size: 0.8rem;
+}
+
+.leaderboard-name {
+  margin-top: 0.25rem;
+  font-size: 1rem;
+  line-height: 1.2;
+}
+
+.leaderboard-points {
+  margin-top: 0.18rem;
+  font-size: 0.78rem;
 }
 
 .timeline-row {
@@ -309,6 +370,10 @@
 @media (max-width: 900px) {
   .hero {
     padding: 2rem 1.4rem;
+  }
+
+  .profile-sections {
+    flex-direction: column;
   }
 
   .points-grid,

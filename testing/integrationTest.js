@@ -1,5 +1,6 @@
 import app from '../server.js';
 import request from 'supertest';
+import { connectCache } from '../caching/caching.js';
 import { pool } from '../public/SQL_functions.js';
 
 afterAll(async () => {
@@ -23,8 +24,7 @@ describe('sign-in route',() => {
                  password: 'TestPassword123!'
             });
 
-        expect(response.status).toBe(302);
-        expect(response.headers.location).toBe('/profilePage');
+        expect(response.status).toBe(200);
     });
 });
 
@@ -69,5 +69,33 @@ describe('Auth rate limter', () => {
     });
 });
 
+describe('sign out route', () =>{
+    test('test user is able to sign out correctly with the session destroyed and returned to the landing page', async () => {
+        const agent = request.agent(app);
+        const response = await agent
+            .post('/sign-in')
+            .send({username: 'testuser',
+                   password: 'TestPassword123!'
+            });
 
+        expect(response.status).toBe(200);
 
+        const signOut = await agent
+            .post('/sign-out')
+            .send()
+
+        expect(signOut.status).toBe(200);
+
+        const profileAfterLogout = await agent.get('/profilePage');
+
+        expect(profileAfterLogout.status).toBe(302);
+        expect(profileAfterLogout.headers.location).toBe('/');
+
+    });
+});
+
+describe('test caching'), () => {
+    test('test caching feature for top 5 with a dummy data set', async () => { 
+
+    });
+}

@@ -306,6 +306,22 @@ app.get('/leaderboard/top5', requireAuth, async (req,res) => {
     }
 });
 
+app.post('/sign-out', requireAuth, (req,res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('error destroying session during sign out', err);
+            return res.status(500).json({
+                error: 'Sign out failed',
+                message: 'An error occurred while signing out. Please try again later.',
+            });
+        }
+        res.clearCookie('connect.sid', { path: '/' });
+        return res.status(200).json({
+            message: 'Sign out successful',
+        });
+    });
+});
+
 if (process.env.NODE_ENV !== 'test') {
     cron.schedule('0 18 * * 0', () => {
         updateScore();
