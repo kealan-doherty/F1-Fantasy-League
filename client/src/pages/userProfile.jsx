@@ -2,32 +2,6 @@ import '../App.css';
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-const DRIVER_NAME_BY_NUMBER = {
-    1: 'Max Verstappen',
-    3: 'Daniel Ricciardo',
-    4: 'Lando Norris',
-    5: 'Gabriel Bortoleto',
-    6: 'Isack Hadjar',
-    10: 'Pierre Gasly',
-    11: 'Sergio Perez',
-    12: 'Kimi Antonelli',
-    14: 'Fernando Alonso',
-    16: 'Charles Leclerc',
-    18: 'Lance Stroll',
-    22: 'Yuki Tsunoda',
-    23: 'Alex Albon',
-    27: 'Nico Hulkenberg',
-    30: 'Liam Lawson',
-    31: 'Esteban Ocon',
-    43: 'Franco Colapinto',
-    44: 'Lewis Hamilton',
-    55: 'Carlos Sainz',
-    63: 'George Russell',
-    77: 'Valtteri Bottas',
-    81: 'Oscar Piastri',
-    87: 'Oliver Bearman',
-};
-
 function UserProfile() {
     const navigate = useNavigate();
     const [profileData, setProfileData] = useState(null);
@@ -67,12 +41,16 @@ function UserProfile() {
                     credentials: 'include',
                 });
 
-                const raceResponse = await fetch('https://api.openf1.org/v1/session_result?session_key=latest&position<=10', {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                    },
-                });
+                const [raceResponse, driversResponse] = await Promise.all([
+                    fetch('https://api.openf1.org/v1/session_result?session_key=latest&position<=10', {
+                        method: 'GET',
+                        headers: { 'Accept': 'application/json' },
+                    }),
+                    fetch('https://api.openf1.org/v1/drivers?session_key=latest', {
+                        method: 'GET',
+                        headers: { 'Accept': 'application/json' },
+                    }),
+                ]);
 
                 const userResponseType = userResponse.headers.get('content-type') || '';
                 const userResult = userResponseType.includes('application/json') ? await userResponse.json() : null;
@@ -82,6 +60,9 @@ function UserProfile() {
 
                 const raceResponseType = raceResponse.headers.get('content-type') || '';
                 const raceResult = raceResponseType.includes('application/json') ? await raceResponse.json() : null;
+
+                const driversResponseType = driversResponse.headers.get('content-type') || '';
+                const driversResult = driversResponseType.includes('application/json') ? await driversResponse.json() : null;
 
                 if (!userResponse.ok) {
                     if (userResponse.status === 401) {
@@ -106,12 +87,17 @@ function UserProfile() {
                 if (!raceResponse.ok) {
                     setRaceResultsError(`Unable to fetch race results (status ${raceResponse.status}).`);
                 } else {
+                    const toTitleCase = (str) => str.replace(/\S+/g, (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase());
+                    const driverNameByNumber = Array.isArray(driversResult)
+                        ? Object.fromEntries(driversResult.map((d) => {
+                            const raw = d.full_name || d.broadcast_name || d.name_acronym;
+                            return [d.driver_number, raw ? toTitleCase(raw) : null];
+                        }))
+                        : {};
+
                     const latestRaceResults = Array.isArray(raceResult)
                         ? raceResult.map((result) => {
-                            const fallbackFullName = [result.first_name, result.last_name].filter(Boolean).join(' ').trim();
-                            const driverNumber = Number(result.driver_number);
-                            const mappedName = Number.isNaN(driverNumber) ? '' : DRIVER_NAME_BY_NUMBER[driverNumber];
-                            const displayName = result.full_name || fallbackFullName || result.broadcast_name || result.name_acronym || mappedName || 'Unknown Driver';
+                            const displayName = driverNameByNumber[result.driver_number] || 'Unknown Driver';
 
                             return {
                                 label: `P${result.position ?? '-'}`,

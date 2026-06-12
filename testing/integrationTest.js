@@ -1,7 +1,8 @@
 import app from '../server.js';
 import request from 'supertest';
-import { connectCache } from '../caching/caching.js';
+import { connectCache, redisClient } from '../caching/caching.js';
 import { pool } from '../public/SQL_functions.js';
+import { GenericContainer } from 'testcontainers';
 
 afterAll(async () => {
     await pool.end();
@@ -77,25 +78,100 @@ describe('sign out route', () =>{
             .send({username: 'testuser',
                    password: 'TestPassword123!'
             });
-
+        
+        // Confirm test user is signed in. 
         expect(response.status).toBe(200);
 
+        //have test user sign out
         const signOut = await agent
             .post('/sign-out')
             .send()
-
+            
         expect(signOut.status).toBe(200);
-
+        
+        //ensure signed out user is unable to go back to the profile page
         const profileAfterLogout = await agent.get('/profilePage');
-
         expect(profileAfterLogout.status).toBe(302);
         expect(profileAfterLogout.headers.location).toBe('/');
 
     });
 });
 
-describe('test caching'), () => {
-    test('test caching feature for top 5 with a dummy data set', async () => { 
+describe('test caching', () => {
+    let container;
+    let canRunCacheTest = true;
+    let skipReason = '';
 
+    beforeAll(async () => {
+        if (process.env.REDIS_URL) {
+            return;
+        }
+
+        try {
+            container = await new GenericContainer('redis:7.2-alpine')
+                .withExposedPorts(6379)
+                .start();
+
+            const host = container.getHost();
+            const port = container.getMappedPort(6379);
+            process.env.REDIS_URL = `redis://${host}:${port}`;
+        } catch (error) {
+            canRunCacheTest = false;
+            skipReason = 'Skipping Redis cache integration test: no container runtime found and REDIS_URL is not set.';
+            console.warn(skipReason, error?.message || error);
+        }
+    }, 30000);
+
+    afterAll(async () => {
+        if (container) await container.stop();
     });
-}
+
+    beforeEach(async () => {
+        if (!canRunCacheTest) {
+            return;
+        }
+
+        await connectCache();
+        if (redisClient.isOpen) {
+            await redisClient.flushDb();
+        }
+    });
+
+    test('caches leaderboard top 5 correctly', async () => {
+        if (!canRunCacheTest) {
+            expect(skipReason).toBeTruthy();
+            return;
+        }
+
+        const agent = request.agent(app);
+        const response = await agent
+            .post('/sign-in')
+            .send({username: 'testuser',
+                  password: 'TestPassword123!'
+            });
+
+            // confirm test user is signed in 
+            expect(response.status).toBe(200);
+
+            //pull top 5 from the data base so cache as data to work with
+            const firstResponse = await agent.get('/leaderboard/top5');
+            expect(firstResponse.status).toBe(200);
+            expect(Array.isArray(firstResponse.body.leaders)).toBe(true);
+            expect(firstResponse.body.leaders.length).toBe(5);
+            expect(firstResponse.body.meta.source).toBe('db');
+
+            //ensure cache has data to pull
+            const cacheData = await redisClient.get('leaderboard:top5');
+            expect(cacheData).not.toBeNull();
+
+            //parse cache data and esnure it is equal to data pulled from the db
+            const parsedCache = JSON.parse(cacheData);
+            expect(parsedCache).toEqual(firstResponse.body.leaders);
+
+            // check subsequent calls return the same cached data
+            const secondResponse = await agent.get('/leaderboard/top5');
+            expect(secondResponse.status).toBe(200);
+            expect(secondResponse.body.leaders).toEqual(firstResponse.body.leaders);
+            expect(secondResponse.body.meta.source).toBe('cache');
+    });
+});
