@@ -1,5 +1,6 @@
 import app from '../server.js';
 import request from 'supertest';
+import 'dotenv/config';
 import { connectCache, redisClient } from '../caching/caching.js';
 import { pool } from '../public/SQL_functions.js';
 import { GenericContainer } from 'testcontainers';
@@ -21,12 +22,29 @@ describe('sign-in route',() => {
     test('accepts valid creds', async () => {
         const response = await request(app)
             .post('/sign-in')
-            .send({username: 'testuser',
-                 password: 'TestPassword123!'
+            .send({username: process.env.TEST_USERNAME,
+                 password: process.env.TEST_PASSWORD
             });
 
         expect(response.status).toBe(200);
+
+        const profileResponse = await request(app)
+            .get('/profilePage')
+            .set('Cookie', response.headers['set-cookie']);
+
+        expect(profileResponse.status).toBe(200);
     });
+
+    test('rejects invalid creds', async () => {
+        const response = await request(app)
+            .post('/sign-in')
+            .send({username: process.env.TEST_USERNAME,
+                password: 'thisIsTheWrongPassword'
+            });
+
+            expect(response.status).toBe(401);
+            expect(response.header['set-cookie']).toBeUndefined();
+    })
 });
 
 describe('Global rate limiter', () => {
@@ -75,8 +93,8 @@ describe('sign out route', () =>{
         const agent = request.agent(app);
         const response = await agent
             .post('/sign-in')
-            .send({username: 'testuser',
-                   password: 'TestPassword123!'
+            .send({username: process.env.TEST_USERNAME,
+                   password: process.env.TEST_PASSWORD
             });
         
         // Confirm test user is signed in. 
@@ -146,8 +164,8 @@ describe('test caching', () => {
         const agent = request.agent(app);
         const response = await agent
             .post('/sign-in')
-            .send({username: 'testuser',
-                  password: 'TestPassword123!'
+            .send({username: process.env.TEST_USERNAME,
+                   password: process.env.TEST_PASSWORD
             });
 
             // confirm test user is signed in 
