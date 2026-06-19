@@ -79,12 +79,10 @@ function LogIn() {
                     {isSubmitting ? 'Logging In....': 'Log In'}
                 </button>
             </form>
-
-            {/*
+    
             <p>
-                <Link to="/forgot-password">Forgot Password?</Link>
+                <Link to="/ResetRequest">Forgot Password?</Link>
             </p>
-            */}
 
         </main>
     );

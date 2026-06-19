@@ -19,7 +19,7 @@ module.exports = {
     overrides: [
         {
             // browser-side scripts served as static files
-            files: ['public/logIn.js', 'public/newUserInfo.js'],
+            files: ['public/**/*.js'],
             env: {
                 browser: true,
                 node: false,

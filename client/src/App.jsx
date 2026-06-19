@@ -5,6 +5,8 @@ import LogIn from './pages/logIn.jsx';
 import SelectTeam from './pages/selectTeamPage.jsx';
 import UserProfile from './pages/userProfile.jsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; 
+import ResetRequest from './pages/ResetRequest.jsx';
+import ResetPassword from './pages/ResetPassword.jsx';
 
 
 function App() {
@@ -17,6 +19,8 @@ function App() {
           <Route path="/LogIn" element={<LogIn />} />
           <Route path="/selectTeam" element={<SelectTeam />} />
           <Route path="/userProfile" element={<UserProfile />} />
+          <Route path="/ResetRequest" element={<ResetRequest />} />
+          <Route path="/ResetPassword" element={<ResetPassword />} />
         </Routes>
       </Router>
     </>
