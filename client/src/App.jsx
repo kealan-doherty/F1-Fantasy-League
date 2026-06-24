@@ -7,6 +7,7 @@ import UserProfile from './pages/userProfile.jsx';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; 
 import ResetRequest from './pages/ResetRequest.jsx';
 import ResetPassword from './pages/ResetPassword.jsx';
+import VerifyToken from './pages/verifyToken.jsx';
 
 
 function App() {
@@ -20,6 +21,7 @@ function App() {
           <Route path="/selectTeam" element={<SelectTeam />} />
           <Route path="/userProfile" element={<UserProfile />} />
           <Route path="/ResetRequest" element={<ResetRequest />} />
+          <Route path="/VerifyToken" element={<VerifyToken />} />
           <Route path="/ResetPassword" element={<ResetPassword />} />
         </Routes>
       </Router>

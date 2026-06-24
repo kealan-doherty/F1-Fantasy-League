@@ -1,6 +1,6 @@
 import '../App.css';
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 
 function ResetRequest() {
@@ -44,7 +44,7 @@ function ResetRequest() {
                 }
                 return; 
             }
-            navigate('/ResetPassword');
+            navigate('/VerifyToken');
         } catch (error) {
             setErrors(['unable to connect to server']);
         } finally {
@@ -75,6 +75,11 @@ function ResetRequest() {
                     {isSubmitting ? 'submitting request....': 'Reset Token Sent'}
                 </button>
             </form>
+
+        <p>
+            <Link to="/LogIn">Log In</Link>
+        </p>
+
         </main>
     )
 }

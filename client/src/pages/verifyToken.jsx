@@ -1,32 +1,32 @@
-import '../App.css'
+import '../App.css';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-function LogIn() {
+function VerifyToken() {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
-        username: '',
-        password: '',
+        email: '',
+        code: ''
     });
     const [errors, setErrors] = useState([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleChange = (event) => {
         const {name, value} = event.target;
-        setFormData((previous) =>({
+        setFormData((previous) => ({
             ...previous,
             [name]: value,
         }));
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event) =>{
         event.preventDefault();
         setErrors([]);
         setIsSubmitting(true);
 
         try {
-            const response = await fetch('/sign-in', {
-                method: 'POST',
+            const response = await fetch('/resetInfo', {
+                method: 'post',
                 headers: {
                     'Content-type': 'application/json',
                 },
@@ -36,56 +36,53 @@ function LogIn() {
 
             const result = await response.json();
 
-            if (!response.ok){
+            if (!response.ok) {
                 if (Array.isArray(result.errors)) {
                     setErrors(result.errors);
                 } else {
-                    setErrors([result.message || 'Unable to log in.']);
+                    setErrors([result.message || 'unable to verify reset token']);
                 }
                 return;
             }
-            navigate('/userProfile');
+            navigate('/ResetPassword');
         } catch (error) {
-            setErrors(['unable to connect to server. Ensure backend is running.']);
+            setErrors(['unable to connect to server unsure the backend is running']);
         } finally {
             setIsSubmitting(false);
         }
     };
 
-
     return (
         <main className="new-user-page">
-    <div className="ambient ambient-left" aria-hidden="true" />
-    <div className="ambient ambient-right" aria-hidden="true" />
-
-            <h1 className="newUserHeadline">Login In Here</h1>
+    <div className="ambient ambient-left" aria-hidden="true"/>
+    <div className="ambient ambient-right" aria-hidden="true"/>
+            <h1 className="newUserHeadline">Enter Email and Reset Token Here</h1>
 
             <form className="new-user-form" onSubmit={handleSubmit}>
-                <label htmlFor="username">Username</label>
-                <input type="text" id="username" name="username" value={formData.username} onChange={handleChange} required />
+                <label htmlFor="email">Email</label>
+                <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} required />
 
-                <label htmlFor="password">Password</label>
-                <input type ="password" id="password" name="password" value={formData.password} onChange={handleChange} required />
+                <label htmlFor="code">Reset Code</label>
+                <input type="text" id="code" name="code" value={formData.code} onChange={handleChange} required />
 
                 {errors.length > 0 && (
                     <div className="form-errors" role="alert" aria-live="polite">
-                        {errors.map((error) => (
+                        {errors.map((error) =>(
                             <p key={error}>{error}</p>
                         ))}
                     </div>
                 )}
 
                 <button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? 'Logging In....': 'Log In'}
+                    {isSubmitting ? 'checking email and reset code': 'code verified'}
                 </button>
             </form>
-    
-            <p>
-                <Link to="/ResetRequest">Forgot Password?</Link>
-            </p>
 
+            <p>
+                <Link to="/LogIn">Login In</Link>
+            </p>
         </main>
     );
 }
 
-export default LogIn
+export default VerifyToken;

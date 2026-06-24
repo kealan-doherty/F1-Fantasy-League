@@ -200,7 +200,9 @@ app.post('/requestReset', authLimiter, async (req, res) => {
 
         const result = await storeResetToken(email, hashedToken, expiry);
         if (!result || result === -1 || result === 0) {
-            return res.send(genericResponse);
+            return res.status(200).json({
+                message:"reset token has been stored"
+            })
         }
 
         await transporter.sendMail({
@@ -213,7 +215,9 @@ app.post('/requestReset', authLimiter, async (req, res) => {
         console.error('error sending reset email', error);
     }
 
-    return res.send(genericResponse);
+    return res.status(200).json({
+        message: 'Reset Code has been Sent to your Email.'
+    });
 });
 
 app.post('/resetInfo', authLimiter, validateResetInfo, handleValidationErrors, async (req,res) => {
@@ -245,7 +249,9 @@ app.post('/resetInfo', authLimiter, validateResetInfo, handleValidationErrors, a
             await clearResetToken(username);
             req.session.user = {username: username};
             req.session.save();
-            return res.redirect('/updatePassword');
+            return res.status(200).json({
+                message: 'Reset Code has been verified'
+            });
         }
 
         return res.status(400).json({
