@@ -228,7 +228,7 @@ describe('test password reset logic', () => {
                     confirmPassword: 'newPassword'
                 });
 
-            expect(ResetResponse.status).toBe(200);
+            expect(resetResponse.status).toBe(200);
             expect(resetResponse.body).toMatchObject({
                 message: 'Password updated successfully'
             });
@@ -243,4 +243,65 @@ describe('test password reset logic', () => {
             
             expect(resetPassword.status).toBe(200);
     });
+
+    test('password is too short for authenicated user', async () =>{
+        const agent = request.agent(app)
+        const response = await agent
+            .post('/sign-in')
+            .send({
+                username: process.env.TEST_USERNAME,
+                password: process.env.TEST_PASSWORD
+            });
+
+            expect(response.status).toBe(200);
+
+        const resetPassword = await agent
+            .post('/resetPasswordConfirm')
+            .send({
+                password: 'fail',
+                confirmPassword: 'fail' 
+            });
+
+            expect(resetPassword.status).toBe(400);
+            expect(resetPassword.body).toMatchObject({
+                error: 'Password must be atleast 8 characters long'
+            });
+
+        const resetPasswordMisMatch = await agent
+            .post('/resetPasswordConfirm')
+            .send({
+                password: 'hellothere',
+                confirmPassword: 'hellotheir'
+            });
+
+            expect(resetPasswordMisMatch.status).toBe(400)
+            expect(resetPasswordMisMatch.body).toMatchObject({
+                errors: expect.arrayContaining(['Password must be at least 8 characters long'])
+            });
+    });
 });
+
+describe('test /resetInfo', () => {
+    test('invalid email format', async () =>{
+        const response = await request(app)
+            .post('/resetInfo')
+            .send({
+                email: 'this is not a valid email',
+                code: process.env.TEST_CODE_FOR_EMAIL_VALIDATION
+            });
+
+            expect(response.status).toBe(400);
+    });
+
+    test('invalid code format', async () => {
+        const invalidCode = await request(app)
+            .post('/resetInfo')
+            .send({
+                email:'cool@gmail.com',
+                code: 'not a cool code'
+            });
+
+            expect(invalidCode.status).toBe(400);
+    });
+});
+
