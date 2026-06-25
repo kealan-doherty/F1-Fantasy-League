@@ -193,3 +193,54 @@ describe('test caching', () => {
             expect(secondResponse.body.meta.source).toBe('cache');
     });
 });
+
+
+describe('test password reset logic', () => {
+    test('blocks unathenticated users from reset confirm route', async () => {
+        const response = await request(app)
+            .post('/resetPasswordConfirm')
+            .send({
+                password: 'password',
+                confirmPassword: 'password'
+            });
+            
+            expect(response.status).toBe(401);
+            expect(response.body).toMatchObject({
+                error: 'Unauthorized'
+            });
+    });
+
+    test('authenicated user is able to access the reset confirm route', async () => {
+        const agent = request.agent(app)
+        const response = await agent
+            .post('/sign-in')
+            .send({
+                username: process.env.TEST_USERNAME,
+                password: process.env.TEST_PASSWORD
+            });
+
+            expect(response.status).toBe(200);
+
+            const resetResponse = await agent
+                .post('/resetPasswordConfirm')
+                .send({
+                    password: 'newPassword',
+                    confirmPassword: 'newPassword'
+                });
+
+            expect(ResetResponse.status).toBe(200);
+            expect(resetResponse.body).toMatchObject({
+                message: 'Password updated successfully'
+            });
+
+            // return test user password to orginial password to not break other tests
+            const resetPassword = await agent
+                .post('/resetPasswordConfirm')
+                .send({
+                    password: process.env.TEST_PASSWORD,
+                    confirmPassword: process.env.TEST_PASSWORD
+                });
+            
+            expect(resetPassword.status).toBe(200);
+    });
+});
