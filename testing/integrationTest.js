@@ -4,6 +4,7 @@ import 'dotenv/config';
 import { connectCache, redisClient } from '../caching/caching.js';
 import { pool } from '../public/SQL_functions.js';
 import { GenericContainer } from 'testcontainers';
+import crypto from 'crypto';
 
 afterAll(async () => {
     await pool.end();
@@ -22,22 +23,24 @@ describe('sign-in route',() => {
     test('accepts valid creds', async () => {
         const response = await request(app)
             .post('/sign-in')
+            .set('X-Forwarded-For', '10.0.0.1')
             .send({username: process.env.TEST_USERNAME,
                  password: process.env.TEST_PASSWORD
             });
 
         expect(response.status).toBe(200);
 
-        const profileResponse = await request(app)
-            .get('/profilePage')
+        const usernameResponse = await request(app)
+            .get('/username')
             .set('Cookie', response.headers['set-cookie']);
 
-        expect(profileResponse.status).toBe(200);
+        expect(usernameResponse.status).toBe(200);
     });
 
     test('rejects invalid creds', async () => {
         const response = await request(app)
             .post('/sign-in')
+            .set('X-Forwarded-For', '10.0.0.2')
             .send({username: process.env.TEST_USERNAME,
                 password: 'thisIsTheWrongPassword'
             });
@@ -93,6 +96,7 @@ describe('sign out route', () =>{
         const agent = request.agent(app);
         const response = await agent
             .post('/sign-in')
+            .set('X-Forwarded-For', '10.0.0.3')
             .send({username: process.env.TEST_USERNAME,
                    password: process.env.TEST_PASSWORD
             });
@@ -164,6 +168,7 @@ describe('test caching', () => {
         const agent = request.agent(app);
         const response = await agent
             .post('/sign-in')
+            .set('X-Forwarded-For', '10.0.0.4')
             .send({username: process.env.TEST_USERNAME,
                    password: process.env.TEST_PASSWORD
             });
@@ -214,6 +219,7 @@ describe('test password reset logic', () => {
         const agent = request.agent(app)
         const response = await agent
             .post('/sign-in')
+            .set('X-Forwarded-For', '10.0.0.5')
             .send({
                 username: process.env.TEST_USERNAME,
                 password: process.env.TEST_PASSWORD
@@ -248,6 +254,7 @@ describe('test password reset logic', () => {
         const agent = request.agent(app)
         const response = await agent
             .post('/sign-in')
+            .set('X-Forwarded-For', '10.0.0.6')
             .send({
                 username: process.env.TEST_USERNAME,
                 password: process.env.TEST_PASSWORD
@@ -264,7 +271,7 @@ describe('test password reset logic', () => {
 
             expect(resetPassword.status).toBe(400);
             expect(resetPassword.body).toMatchObject({
-                error: 'Password must be atleast 8 characters long'
+                errors: expect.arrayContaining(['Password must be at least 8 characters long'])
             });
 
         const resetPasswordMisMatch = await agent
@@ -276,7 +283,7 @@ describe('test password reset logic', () => {
 
             expect(resetPasswordMisMatch.status).toBe(400)
             expect(resetPasswordMisMatch.body).toMatchObject({
-                errors: expect.arrayContaining(['Password must be at least 8 characters long'])
+                errors: expect.arrayContaining(['Passwords do not match'])
             });
     });
 });
@@ -285,6 +292,7 @@ describe('test /resetInfo', () => {
     test('invalid email format', async () =>{
         const response = await request(app)
             .post('/resetInfo')
+            .set('X-Forwarded-For', '10.0.0.7')
             .send({
                 email: 'this is not a valid email',
                 code: process.env.TEST_CODE_FOR_EMAIL_VALIDATION
@@ -296,12 +304,56 @@ describe('test /resetInfo', () => {
     test('invalid code format', async () => {
         const invalidCode = await request(app)
             .post('/resetInfo')
+            .set('X-Forwarded-For', '10.0.0.8')
             .send({
                 email:'cool@gmail.com',
                 code: 'not a cool code'
             });
 
             expect(invalidCode.status).toBe(400);
+    });
+});
+
+describe('test /resetInfo with valid inputs', () => {
+    let testEmail;
+
+    beforeAll(async () => {
+        const result = await pool.query(
+            'SELECT email FROM public.user_info WHERE username = $1',
+            [process.env.TEST_USERNAME] 
+        );
+        expect(result.rows.length).toBe(1);
+        testEmail = result.rows[0].email;
+    });
+
+    afterEach(async () => {
+        await pool.query(
+            'UPDATE public.user_info SET reset_token = NULL, token_expiry = NULL WHERE email = $1',
+            [testEmail]
+        );
+    });
+    test('valid format but wrong code', async () => {
+        const realCode = 'a'.repeat(64);
+        const wrongCode = 'b'.repeat(64);
+        const hashedRealCode = crypto.createHash('sha256').update(realCode).digest('hex');
+
+        await pool.query(
+            'UPDATE public.user_info SET reset_token = $1, token_expiry = $2 WHERE email = $3',
+            [hashedRealCode, new Date(Date.now() + 10 * 60 * 1000), testEmail ]
+        );
+        
+        const response = await request(app)
+            .post('/resetInfo')
+            .set('X-Forwarded-For', '3.3.3.3')
+            .send({
+                email: testEmail,
+                code: wrongCode
+            });
+
+        expect(response.status).toBe(400);
+        expect(response.body).toMatchObject({
+            error: 'Invalid reset code'
+        });
     });
 });
 
